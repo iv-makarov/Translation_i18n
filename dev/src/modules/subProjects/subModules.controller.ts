@@ -7,14 +7,17 @@ import {
   Post,
   Put,
   Query,
+  UseGuards,
 } from '@nestjs/common';
-import { SubProjectsService } from './subProjects.service';
-import { SubProjects } from 'db/entitis/SubProjects';
 import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
-import { SubProjectDto } from 'src/modules/subProjects/dto/subProject.dto';
+import { SubProjects } from 'db/entitis/SubProjects';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { FiltersSubProjectDto } from 'src/modules/subProjects/dto/filtersSubProject.dto';
+import { SubProjectDto } from 'src/modules/subProjects/dto/subProject.dto';
+import { SubProjectsService } from './subProjects.service';
 
 @Controller('sub-projects')
+@UseGuards(JwtAuthGuard)
 export class SubProjectsController {
   constructor(private readonly subProjectsService: SubProjectsService) {}
 

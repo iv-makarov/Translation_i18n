@@ -2,11 +2,13 @@ import {
   Collection,
   Entity,
   Index,
+  ManyToOne,
   OneToMany,
   PrimaryKey,
   Property,
 } from '@mikro-orm/core';
 import { SubProjects } from './SubProjects';
+import { User } from './User';
 
 @Entity()
 @Index({ properties: ['name'] })
@@ -32,6 +34,9 @@ export class Projects {
 
   @Property()
   isBlocked: boolean = false;
+
+  @ManyToOne(() => User, { nullable: false })
+  user: User;
 
   @OneToMany(() => SubProjects, (subProject) => subProject.project, {
     cascade: [],

@@ -1,5 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
 
+export class UserResponseDto {
+  @ApiProperty({
+    description: 'Уникальный идентификатор пользователя',
+    example: 'ca2b82f0-e49c-42ad-a105-b76043ea425b',
+  })
+  id: string;
+
+  @ApiProperty({
+    description: 'Имя пользователя',
+    example: 'Иван',
+  })
+  firstName: string;
+
+  @ApiProperty({
+    description: 'Фамилия пользователя',
+    example: 'Иванов',
+  })
+  lastName: string;
+}
+
 export class ProjectResponseDto {
   @ApiProperty({
     description: 'Уникальный идентификатор проекта',
@@ -42,6 +62,12 @@ export class ProjectResponseDto {
     example: false,
   })
   isBlocked: boolean;
+
+  @ApiProperty({
+    description: 'Информация о пользователе',
+    type: UserResponseDto,
+  })
+  user: UserResponseDto;
 }
 
 export class ProjectsListResponseDto {

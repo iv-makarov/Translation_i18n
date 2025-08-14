@@ -6,11 +6,14 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { Translations } from 'db/entitis/Translations';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import { TranslationsService } from 'src/modules/translations/translations.service';
 
 @Controller('translations')
+@UseGuards(JwtAuthGuard)
 export class TranslationsController {
   constructor(private readonly translationsService: TranslationsService) {}
 

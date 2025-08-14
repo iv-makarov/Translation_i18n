@@ -8,18 +8,21 @@ import {
   Param,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import {
   CreateProjectResponseDto,
   DeleteProjectResponseDto,
   FilterProjectsDto,
 } from 'src/modules/projects/dto/filterProjects.dto';
-import { ProjectsListResponseDto } from './dto/project.dto';
 import { CreateProjectDto } from './dto/createProjects.dto';
+import { ProjectsListResponseDto } from './dto/project.dto';
 import { ProjectsService } from './projects.service';
 
 @Controller('projects')
+@UseGuards(JwtAuthGuard)
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
@@ -49,6 +52,38 @@ export class ProjectsController {
   })
   getProjects(@Query() filterProjectsDto: FilterProjectsDto) {
     return this.projectsService.getProjects(filterProjectsDto);
+  }
+
+  @Get('user/:userId')
+  @ApiParam({ name: 'userId', type: String, description: 'ID пользователя' })
+  @ApiResponse({
+    status: 200,
+    description: 'Список проектов пользователя успешно получен',
+    type: ProjectsListResponseDto,
+    schema: {
+      example: {
+        data: [
+          {
+            id: 'ca2b82f0-e49c-42ad-a105-b76043ea425b',
+            name: 'Мой проект',
+            description: 'Описание моего проекта',
+            createdAt: '2024-01-15T10:30:00.000Z',
+            updatedAt: '2024-01-15T10:30:00.000Z',
+            isVerified: false,
+            isBlocked: false,
+          },
+        ],
+        total: 5,
+        page: 1,
+        limit: 10,
+      },
+    },
+  })
+  getProjectsByUser(
+    @Param('userId') userId: string,
+    @Query() filterProjectsDto: FilterProjectsDto,
+  ) {
+    return this.projectsService.getProjectsByUser(userId, filterProjectsDto);
   }
 
   @Post()
