@@ -6,6 +6,8 @@ import { DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // CORS
+  app.enableCors();
 
   // Initialize database schema
   const orm = app.get(MikroORM);
