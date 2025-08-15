@@ -1,6 +1,153 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/auth/register": {
+      "post": {
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RegisterDto" }
+            }
+          }
+        },
+        "responses": { "201": { "description": "" } },
+        "tags": ["Auth"]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoginDto" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "" } },
+        "tags": ["Auth"]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "operationId": "AuthController_refreshToken",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/RefreshTokenDto" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "" } },
+        "tags": ["Auth"]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LogoutDto" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "" } },
+        "tags": ["Auth"]
+      }
+    },
+    "/auth/profile": {
+      "get": {
+        "operationId": "AuthController_getProfile",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["Auth"]
+      }
+    },
+    "/auth/health": {
+      "get": {
+        "operationId": "AuthController_health",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["Auth"]
+      }
+    },
+    "/user": {
+      "post": {
+        "operationId": "UserController_createUser",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateUserDto" }
+            }
+          }
+        },
+        "responses": { "201": { "description": "" } },
+        "tags": ["User"]
+      }
+    },
+    "/user/profile": {
+      "get": {
+        "operationId": "UserController_getProfile",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["User"]
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "operationId": "UserController_getUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "" } },
+        "tags": ["User"]
+      },
+      "put": {
+        "operationId": "UserController_updateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "" } },
+        "tags": ["User"]
+      }
+    },
+    "/user/{id}/password": {
+      "put": {
+        "operationId": "UserController_updateUserPassword",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "200": { "description": "" } },
+        "tags": ["User"]
+      }
+    },
     "/projects": {
       "get": {
         "operationId": "ProjectsController_getProjects",
@@ -107,6 +254,91 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/CreateProjectResponseDto"
+                }
+              }
+            }
+          }
+        },
+        "tags": ["Projects"]
+      }
+    },
+    "/projects/user/{userId}": {
+      "get": {
+        "operationId": "ProjectsController_getProjectsByUser",
+        "parameters": [
+          {
+            "name": "userId",
+            "required": true,
+            "in": "path",
+            "description": "ID пользователя",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "page",
+            "required": false,
+            "in": "query",
+            "description": "Номер страницы для пагинации",
+            "schema": { "minimum": 1, "example": 1, "type": "number" }
+          },
+          {
+            "name": "limit",
+            "required": false,
+            "in": "query",
+            "description": "Количество проектов на странице",
+            "schema": {
+              "minimum": 1,
+              "maximum": 100,
+              "example": 10,
+              "type": "number"
+            }
+          },
+          {
+            "name": "search",
+            "required": false,
+            "in": "query",
+            "description": "Поисковый запрос для фильтрации проектов по названию или описанию",
+            "schema": { "example": "project", "type": "string" }
+          },
+          {
+            "name": "isVerified",
+            "required": false,
+            "in": "query",
+            "description": "Фильтр по статусу верификации проекта",
+            "schema": { "example": true, "type": "boolean" }
+          },
+          {
+            "name": "isBlocked",
+            "required": false,
+            "in": "query",
+            "description": "Фильтр по статусу блокировки проекта",
+            "schema": { "example": false, "type": "boolean" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Список проектов пользователя успешно получен",
+            "schema": {
+              "example": {
+                "data": [
+                  {
+                    "id": "ca2b82f0-e49c-42ad-a105-b76043ea425b",
+                    "name": "Мой проект",
+                    "description": "Описание моего проекта",
+                    "createdAt": "2024-01-15T10:30:00.000Z",
+                    "updatedAt": "2024-01-15T10:30:00.000Z",
+                    "isVerified": false,
+                    "isBlocked": false
+                  }
+                ],
+                "total": 5,
+                "page": 1,
+                "limit": 10
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProjectsListResponseDto"
                 }
               }
             }
@@ -379,7 +611,61 @@
   "tags": [],
   "servers": [],
   "components": {
+    "securitySchemes": {
+      "JWT-auth": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http",
+        "name": "JWT",
+        "description": "Enter JWT token",
+        "in": "header"
+      }
+    },
     "schemas": {
+      "RegisterDto": { "type": "object", "properties": {} },
+      "LoginDto": { "type": "object", "properties": {} },
+      "RefreshTokenDto": { "type": "object", "properties": {} },
+      "LogoutDto": { "type": "object", "properties": {} },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "lastName": {
+            "type": "string",
+            "description": "Last name of the user"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First name of the user"
+          },
+          "email": { "type": "string", "description": "Email of the user" },
+          "password": {
+            "type": "string",
+            "description": "Password of the user"
+          }
+        },
+        "required": ["lastName", "firstName", "email", "password"]
+      },
+      "UserResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Уникальный идентификатор пользователя",
+            "example": "ca2b82f0-e49c-42ad-a105-b76043ea425b"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "Имя пользователя",
+            "example": "Иван"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Фамилия пользователя",
+            "example": "Иванов"
+          }
+        },
+        "required": ["id", "firstName", "lastName"]
+      },
       "ProjectResponseDto": {
         "type": "object",
         "properties": {
@@ -419,6 +705,10 @@
             "type": "boolean",
             "description": "Статус блокировки проекта",
             "example": false
+          },
+          "user": {
+            "description": "Информация о пользователе",
+            "allOf": [{ "$ref": "#/components/schemas/UserResponseDto" }]
           }
         },
         "required": [
@@ -428,7 +718,8 @@
           "createdAt",
           "updatedAt",
           "isVerified",
-          "isBlocked"
+          "isBlocked",
+          "user"
         ]
       },
       "ProjectsListResponseDto": {
