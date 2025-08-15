@@ -1,12 +1,11 @@
 import {
-  Collection,
   Entity,
   OneToMany,
   PrimaryKey,
   Property,
   Unique,
 } from '@mikro-orm/core';
-import { Projects } from 'db/entitis/Projects';
+import { Projects } from './Projects';
 
 @Entity()
 export class User {
@@ -44,8 +43,6 @@ export class User {
   @Property()
   updatedAt: Date = new Date();
 
-  @OneToMany(() => Projects, (project) => project.user, {
-    cascade: [],
-  })
-  projects = new Collection<Projects>(this);
+  @OneToMany(() => Projects, (project) => project.user)
+  projects?: Projects[];
 }
