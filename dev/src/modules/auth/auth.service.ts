@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
-import { User } from 'db/entitis/User';
+import { User, UserRole } from 'db/entitis/User';
 import { jwtConfig, refreshTokenConfig } from 'src/config/jwt.config';
 import {
   LoginDto,
@@ -52,10 +52,12 @@ export class AuthService {
     const user = this.em.create(User, {
       ...registerDto,
       password: hashedPassword,
-      role: 'user',
+      role: UserRole.ADMIN,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date(),
+      projects: [],
+      lastLoginAt: new Date(),
     });
 
     await this.em.persistAndFlush(user);
@@ -102,11 +104,11 @@ export class AuthService {
     // Обновляем refresh token в базе и время последнего входа
     user.refreshToken = await bcrypt.hash(tokens.refreshToken, 12);
     user.lastLoginAt = new Date();
-    user.updatedAt = new Date();
     await this.em.persistAndFlush(user);
 
     // Возвращаем пользователя без пароля и refresh token
-    const { ...userWithoutSensitiveData } = user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { password, refreshToken, ...userWithoutSensitiveData } = user;
     return { user: userWithoutSensitiveData, tokens };
   }
 

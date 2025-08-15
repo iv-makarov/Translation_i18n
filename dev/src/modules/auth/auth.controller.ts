@@ -64,9 +64,7 @@ export class AuthController {
     this.setCookies(res, tokens);
 
     return {
-      message: 'Login successful',
       user,
-      tokens,
     };
   }
 

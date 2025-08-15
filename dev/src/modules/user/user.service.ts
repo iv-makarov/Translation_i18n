@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { User } from 'db/entitis/User';
+import { User, UserRole } from 'db/entitis/User';
 import { CreateUserDto } from 'src/modules/user/dto/userCreate.dto';
 
 @Injectable()
@@ -27,7 +27,7 @@ export class UserService {
     const user = this.em.create(User, {
       ...createUserDto,
       password: hashedPassword,
-      role: 'user',
+      role: UserRole.USER,
       isActive: true,
       createdAt: new Date(),
       updatedAt: new Date(),

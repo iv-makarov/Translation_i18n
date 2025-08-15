@@ -7,6 +7,11 @@ import {
 } from '@mikro-orm/core';
 import { Projects } from './Projects';
 
+export enum UserRole {
+  ADMIN = 'admin',
+  USER = 'user',
+}
+
 @Entity()
 export class User {
   @PrimaryKey()
@@ -25,8 +30,8 @@ export class User {
   @Property()
   password: string;
 
-  @Property()
-  role: 'admin' | 'user' = 'user';
+  @Property({ default: UserRole.USER })
+  role: UserRole;
 
   @Property()
   isActive: boolean = true;
@@ -34,7 +39,7 @@ export class User {
   @Property()
   lastLoginAt?: Date;
 
-  @Property()
+  @Property({ nullable: true })
   refreshToken?: string;
 
   @Property()
