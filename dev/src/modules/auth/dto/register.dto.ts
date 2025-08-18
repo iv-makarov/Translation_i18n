@@ -1,28 +1,34 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class RegisterDto {
-  @IsString({ message: 'Email must be a string' })
-  @IsEmail({}, { message: 'Invalid email format' })
-  @IsNotEmpty({ message: 'Email is required' })
-  email: string;
-
-  @IsString({ message: 'First name must be a string' })
-  @IsNotEmpty({ message: 'First name is required' })
-  @MinLength(2, {
-    message: 'First name must be at least 2 characters long',
-  })
-  firstName: string;
-
-  @IsString({ message: 'Last name must be a string' })
-  @IsNotEmpty({ message: 'Last name is required' })
-  @MinLength(2, {
-    message: 'Last name must be at least 2 characters long',
-  })
+  // Last name
+  @ApiProperty({ description: 'Last name of the user', example: 'Doe' })
+  @IsString()
+  @IsNotEmpty()
+  @Length(2, 20)
   lastName: string;
 
-  @IsNotEmpty({ message: 'Password is required' })
-  @MinLength(6, {
-    message: 'Password must be at least 6 characters long',
+  // First name
+  @ApiProperty({ description: 'First name of the user', example: 'John' })
+  @IsString()
+  @IsNotEmpty()
+  @Length(2, 20)
+  firstName: string;
+
+  // Email
+  @ApiProperty({
+    description: 'Email of the user',
+    example: 'john.doe@example.com',
   })
+  @IsEmail()
+  @IsNotEmpty()
+  email: string;
+
+  // Password
+  @ApiProperty({ description: 'Password of the user', example: 'password' })
+  @IsString()
+  @Length(6, 20)
+  @IsNotEmpty()
   password: string;
 }

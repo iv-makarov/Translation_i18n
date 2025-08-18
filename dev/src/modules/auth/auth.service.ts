@@ -6,14 +6,11 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { Session } from 'db/entitis/Session';
 import { User, UserRole } from 'db/entitis/User';
 import { jwtConfig, refreshTokenConfig } from 'src/config/jwt.config';
-import {
-  LoginDto,
-  LogoutDto,
-  RefreshTokenDto,
-  RegisterDto,
-} from 'src/modules/user/dto/auth.dto';
+import { LoginDto } from 'src/modules/auth/dto/login.dto';
+import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 
 export interface Tokens {
   accessToken: string;
@@ -34,10 +31,10 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto): Promise<{
-    user: Omit<User, 'password' | 'refreshToken'>;
-    tokens: Tokens;
+    user: Omit<User, 'passwordHash'>;
+    accessToken: string;
   }> {
-    // Проверяем, существует ли пользователь с таким email
+    // check if user already exists
     const existingUser = await this.em.findOne(User, {
       email: registerDto.email,
     });
@@ -45,40 +42,65 @@ export class AuthService {
       throw new ConflictException('User with this email already exists');
     }
 
-    // Хешируем пароль
+    // hash password
     const hashedPassword = await bcrypt.hash(registerDto.password, 12);
 
-    // Создаем пользователя
+    // create user
     const user = this.em.create(User, {
       ...registerDto,
-      password: hashedPassword,
+      passwordHash: hashedPassword,
       role: UserRole.ADMIN,
       isActive: true,
+      isEmailVerified: false,
       createdAt: new Date(),
       updatedAt: new Date(),
-      projects: [],
-      lastLoginAt: new Date(),
     });
 
     await this.em.persistAndFlush(user);
 
-    // Генерируем токены
-    const tokens = await this.generateTokens(user.id, user.email, user.role);
+    const jti = crypto.randomUUID();
+    const access = await this.jwtService.signAsync(
+      { sub: user.id },
+      {
+        secret: process.env.AT_SECRET,
+        expiresIn: '15m',
+        audience: 'spa',
+        issuer: 'your-app',
+      },
+    );
+    const refresh = await this.jwtService.signAsync(
+      { sub: user.id, jti },
+      {
+        secret: process.env.RT_SECRET,
+        expiresIn: '30d',
+        audience: 'spa',
+        issuer: 'your-app',
+      },
+    );
 
-    // Сохраняем refresh token в базе
-    user.refreshToken = await bcrypt.hash(tokens.refreshToken, 12);
-    await this.em.persistAndFlush(user);
+    // create session
+    const session = this.em.create(Session, {
+      accessToken: access,
+      user: user.id,
+      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+      revoked: false,
+      createdAt: new Date(),
+    });
 
-    // Возвращаем пользователя без пароля и refresh token
+    await this.em.persistAndFlush(session);
+
+    setC;
+
+    // return user and access token
     const { ...userWithoutSensitiveData } = user;
-    return { user: userWithoutSensitiveData, tokens };
+    return { user: userWithoutSensitiveData, accessToken: access };
   }
 
   async login(loginDto: LoginDto): Promise<{
-    user: Omit<User, 'password' | 'refreshToken'>;
+    user: Omit<User, 'passwordHash'>;
     tokens: Tokens;
   }> {
-    // Находим пользователя
+    // find user
     const user = await this.em.findOne(User, { email: loginDto.email });
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
@@ -92,7 +114,7 @@ export class AuthService {
     // Проверяем пароль
     const isPasswordValid = await bcrypt.compare(
       loginDto.password,
-      user.password,
+      user.passwordHash,
     );
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
@@ -101,82 +123,91 @@ export class AuthService {
     // Генерируем новые токены
     const tokens = await this.generateTokens(user.id, user.email, user.role);
 
-    // Обновляем refresh token в базе и время последнего входа
-    user.refreshToken = await bcrypt.hash(tokens.refreshToken, 12);
-    user.lastLoginAt = new Date();
+    // Обновляем время последнего входа
+    user.updatedAt = new Date();
     await this.em.persistAndFlush(user);
 
-    // Возвращаем пользователя без пароля и refresh token
+    // Возвращаем пользователя без пароля
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { password, refreshToken, ...userWithoutSensitiveData } = user;
+    const { passwordHash, ...userWithoutSensitiveData } = user;
     return { user: userWithoutSensitiveData, tokens };
   }
 
-  async refreshToken(refreshTokenDto: RefreshTokenDto): Promise<Tokens> {
-    try {
-      // Верифицируем refresh token
-      const payload = await this.jwtService.verifyAsync<JwtPayload>(
-        refreshTokenDto.refreshToken,
-        {
-          secret: refreshTokenConfig.secret,
-        },
-      );
+  // async refreshToken(refreshTokenDto: RefreshTokenDto): Promise<Tokens> {
+  //   try {
+  //     // Верифицируем refresh token
+  //     const payload = await this.jwtService.verifyAsync<JwtPayload>(
+  //       refreshTokenDto.refreshToken,
+  //       {
+  //         secret: refreshTokenConfig.secret,
+  //       },
+  //     );
 
-      // Находим пользователя
-      const user = await this.em.findOne(User, { id: payload.sub });
-      if (!user || !user.isActive) {
-        throw new UnauthorizedException('User not found or inactive');
-      }
+  //     // Находим пользователя
+  //     const user = await this.em.findOne(User, { id: payload.sub });
+  //     if (!user || !user.isActive) {
+  //       throw new UnauthorizedException('User not found or inactive');
+  //     }
 
-      // Проверяем, что refresh token в базе совпадает с переданным
-      const isRefreshTokenValid = await bcrypt.compare(
-        refreshTokenDto.refreshToken,
-        user.refreshToken || '',
-      );
-      if (!isRefreshTokenValid) {
-        throw new UnauthorizedException('Invalid refresh token');
-      }
+  //     // Проверяем, что refresh token в базе совпадает с переданным
+  //     const isRefreshTokenValid = await bcrypt.compare(
+  //       refreshTokenDto.refreshToken,
+  //       user.refreshToken || '',
+  //     );
+  //     if (!isRefreshTokenValid) {
+  //       throw new UnauthorizedException('Invalid refresh token');
+  //     }
 
-      // Генерируем новые токены
-      const tokens = await this.generateTokens(user.id, user.email, user.role);
+  //     // Генерируем новые токены
+  //     const tokens = await this.generateTokens(user.id, user.email, user.role);
 
-      // Обновляем refresh token в базе
-      user.refreshToken = await bcrypt.hash(tokens.refreshToken, 12);
-      user.updatedAt = new Date();
-      await this.em.persistAndFlush(user);
+  //     // Обновляем refresh token в базе
+  //     user.refreshToken = await bcrypt.hash(tokens.refreshToken, 12);
+  //     user.updatedAt = new Date();
+  //     await this.em.persistAndFlush(user);
 
-      return tokens;
-    } catch {
-      throw new UnauthorizedException('Invalid refresh token');
-    }
-  }
+  //     return tokens;
+  //   } catch {
+  //     throw new UnauthorizedException('Invalid refresh token');
+  //   }
+  // }
 
-  async logout(logoutDto: LogoutDto): Promise<void> {
-    try {
-      // Верифицируем refresh token
-      const payload = await this.jwtService.verifyAsync<JwtPayload>(
-        logoutDto.refreshToken,
-        {
-          secret: refreshTokenConfig.secret,
-        },
-      );
+  // async logout(logoutDto: LogoutDto): Promise<void> {
+  //   try {
+  //     // Верифицируем refresh token
+  //     const payload = await this.jwtService.verifyAsync<JwtPayload>(
+  //       logoutDto.refreshToken,
+  //       {
+  //         secret: refreshTokenConfig.secret,
+  //       },
+  //     );
 
-      // Находим пользователя
-      const user = await this.em.findOne(User, { id: payload.sub });
-      if (user) {
-        // Очищаем refresh token
-        user.refreshToken = undefined;
-        user.updatedAt = new Date();
-        await this.em.persistAndFlush(user);
-      }
-    } catch {
-      // Игнорируем ошибки при logout
-    }
-  }
+  //     // Находим пользователя
+  //     const user = await this.em.findOne(User, { id: payload.sub });
+  //     if (user) {
+  //       // Очищаем refresh token
+  //       user.refreshToken = undefined;
+  //       user.updatedAt = new Date();
+  //       await this.em.persistAndFlush(user);
+  //     }
+  //   } catch {
+  //     // Игнорируем ошибки при logout
+  //   }
+  // }
 
   async validateUser(id: string): Promise<User | null> {
     const user = await this.em.findOne(User, { id, isActive: true });
     return user;
+  }
+
+  private setRefreshCookie(res: Response, token: string) {
+    res.cookie('rt', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict', // или 'lax'
+      path: '/auth/refresh',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+    });
   }
 
   private async generateTokens(

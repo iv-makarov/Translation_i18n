@@ -10,15 +10,11 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import {
-  LoginDto,
-  LogoutDto,
-  RefreshTokenDto,
-  RegisterDto,
-} from 'src/modules/user/dto/auth.dto';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RegisterDto } from 'src/modules/auth/dto/register.dto';
+import { LoginDto } from 'src/modules/auth/dto/login.dto';
 
 interface RequestWithUser extends Request {
   user?: {
@@ -34,7 +30,7 @@ export class AuthController {
 
   @Public()
   @Post('register')
-  @HttpCode(HttpStatus.CREATED)
+  @HttpCode(HttpStatus.OK)
   async register(
     @Body() registerDto: RegisterDto,
     @Res({ passthrough: true }) res: Response,
@@ -68,39 +64,39 @@ export class AuthController {
     };
   }
 
-  @Post('refresh')
-  @HttpCode(HttpStatus.OK)
-  async refreshToken(
-    @Body() refreshTokenDto: RefreshTokenDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const tokens = await this.authService.refreshToken(refreshTokenDto);
+  // @Post('refresh')
+  // @HttpCode(HttpStatus.OK)
+  // async refreshToken(
+  //   @Body() refreshTokenDto: RefreshTokenDto,
+  //   @Res({ passthrough: true }) res: Response,
+  // ) {
+  //   const tokens = await this.authService.refreshToken(refreshTokenDto);
 
-    // Обновляем куки
-    this.setCookies(res, tokens);
+  //   // Обновляем куки
+  //   this.setCookies(res, tokens);
 
-    return {
-      message: 'Token refreshed successfully',
-      tokens,
-    };
-  }
+  //   return {
+  //     message: 'Token refreshed successfully',
+  //     tokens,
+  //   };
+  // }
 
-  @UseGuards(JwtAuthGuard)
-  @Post('logout')
-  @HttpCode(HttpStatus.OK)
-  async logout(
-    @Body() logoutDto: LogoutDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    await this.authService.logout(logoutDto);
+  // @UseGuards(JwtAuthGuard)
+  // @Post('logout')
+  // @HttpCode(HttpStatus.OK)
+  // async logout(
+  //   @Body() logoutDto: LogoutDto,
+  //   @Res({ passthrough: true }) res: Response,
+  // ) {
+  //   await this.authService.logout(logoutDto);
 
-    // Очищаем куки
-    this.clearCookies(res);
+  //   // Очищаем куки
+  //   this.clearCookies(res);
 
-    return {
-      message: 'Logout successful',
-    };
-  }
+  //   return {
+  //     message: 'Logout successful',
+  //   };
+  // }
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
