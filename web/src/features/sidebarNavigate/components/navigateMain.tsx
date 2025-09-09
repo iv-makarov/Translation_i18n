@@ -5,8 +5,8 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/shared/components/ui/sidebar";
+import { useNavigate } from "@tanstack/react-router";
 import { FileText, Home } from "lucide-react";
-import { useNavigate } from "react-router";
 
 export default function NavigateMain() {
   const navigate = useNavigate();
@@ -30,7 +30,7 @@ export default function NavigateMain() {
           <SidebarMenuItem key={item.title}>
             <SidebarMenuButton
               tooltip={item.title}
-              onClick={() => navigate(item.path)}
+              onClick={() => navigate({ to: item.path })}
             >
               {item.icon && <item.icon />}
               <span>{item.title}</span>

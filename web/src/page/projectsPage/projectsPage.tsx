@@ -1,6 +1,5 @@
+import ProjectCreate from "@/page/projectsPage/projectCreate";
 import ProjectTable from "@/page/projectsPage/projectTable";
-import { Button } from "@/shared/components/ui/button";
-import { Plus } from "lucide-react";
 
 export default function ProjectsPage() {
   return (
@@ -10,13 +9,9 @@ export default function ProjectsPage() {
           <div>
             <h3 className="text-2xl font-bold">Projects</h3>
             <p className="text-muted-foreground">
-              Manage your projects and their statuses
             </p>
           </div>
-          <Button>
-            <Plus />
-            Add Project
-          </Button>
+          <ProjectCreate />
         </div>
 
         <ProjectTable />

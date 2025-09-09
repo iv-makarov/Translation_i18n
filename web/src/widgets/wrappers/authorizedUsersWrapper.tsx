@@ -4,17 +4,18 @@ import {
   SidebarInset,
   SidebarProvider,
 } from "@/shared/components/ui/sidebar";
-import { Outlet } from "react-router";
 
+interface AuthorizedUsersWrapperProps {
+  children: React.ReactNode;
+}
 
-
-export default function AuthorizedUsersWrapper() {
+export default function AuthorizedUsersWrapper({ children }: AuthorizedUsersWrapperProps) {
   return (
     <SidebarProvider>
       <Navigate />
       <SidebarInset>
         <Header />
-        <Outlet />
+        {children}
       </SidebarInset>
     </SidebarProvider>
   );
