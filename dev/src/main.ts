@@ -11,7 +11,7 @@ async function bootstrap() {
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
-      forbidNonWhitelisted: true,
+      forbidNonWhitelisted: false, // Временно отключаем для отладки
       transform: true,
       transformOptions: {
         enableImplicitConversion: true,

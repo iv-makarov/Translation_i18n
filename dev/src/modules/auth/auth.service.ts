@@ -58,7 +58,7 @@ export class AuthService {
 
     await this.em.persistAndFlush(user);
 
-    const jti = crypto.randomUUID();
+    // const jti = crypto.randomUUID();
     const access = await this.jwtService.signAsync(
       { sub: user.id },
       {
@@ -68,15 +68,15 @@ export class AuthService {
         issuer: 'your-app',
       },
     );
-    const refresh = await this.jwtService.signAsync(
-      { sub: user.id, jti },
-      {
-        secret: process.env.RT_SECRET,
-        expiresIn: '30d',
-        audience: 'spa',
-        issuer: 'your-app',
-      },
-    );
+    // const refresh = await this.jwtService.signAsync(
+    //   { sub: user.id, jti },
+    //   {
+    //     secret: process.env.RT_SECRET,
+    //     expiresIn: '30d',
+    //     audience: 'spa',
+    //     issuer: 'your-app',
+    //   },
+    // );
 
     // create session
     const session = this.em.create(Session, {
@@ -88,8 +88,6 @@ export class AuthService {
     });
 
     await this.em.persistAndFlush(session);
-
-    setC;
 
     // return user and access token
     const { ...userWithoutSensitiveData } = user;
@@ -200,15 +198,15 @@ export class AuthService {
     return user;
   }
 
-  private setRefreshCookie(res: Response, token: string) {
-    res.cookie('rt', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'strict', // или 'lax'
-      path: '/auth/refresh',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-    });
-  }
+  // private setRefreshCookie(res: Response, token: string) {
+  //   res.cookie('rt', token, {
+  //     httpOnly: true,
+  //     secure: true,
+  //     sameSite: 'strict', // или 'lax'
+  //     path: '/auth/refresh',
+  //     maxAge: 30 * 24 * 60 * 60 * 1000,
+  //   });
+  // }
 
   private async generateTokens(
     userId: string,

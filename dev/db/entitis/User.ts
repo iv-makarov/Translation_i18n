@@ -1,13 +1,14 @@
 import {
   Cascade,
+  Collection,
   Entity,
   OneToMany,
   PrimaryKey,
   Property,
   Unique,
 } from '@mikro-orm/core';
-import { Projects } from './Projects';
 import { ApiProperty } from '@nestjs/swagger';
+import { Projects } from './Projects';
 
 export enum UserRole {
   ADMIN = 'admin',
@@ -102,9 +103,9 @@ export class User {
     description: 'Projects',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  @OneToMany(() => Projects, (project) => project.user, {
-    orphanRemoval: true,
-    cascade: [Cascade.REMOVE],
-  })
-  projects?: Projects[];
+  // @OneToMany(() => Projects, (project) => project.user, {
+  //   orphanRemoval: true,
+  //   cascade: [Cascade.REMOVE],
+  // })
+  projects = new Collection<Projects>(this);
 }

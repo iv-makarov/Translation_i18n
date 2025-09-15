@@ -9,79 +9,76 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProjectsPostIdRouteImport } from './routes/projects_.$postId'
-import { Route as ProjectsPostIdEditRouteImport } from './routes/projects_.$postId.edit'
+import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
+import { Route as ProjectsIdProjectRouteImport } from './routes/projects/$idProject'
+import { Route as ProjectsIdProjectEditRouteImport } from './routes/projects/$idProject.edit'
 
-const ProjectsRoute = ProjectsRouteImport.update({
-  id: '/projects',
-  path: '/projects',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProjectsPostIdRoute = ProjectsPostIdRouteImport.update({
-  id: '/projects_/$postId',
-  path: '/projects/$postId',
+const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+  id: '/projects/',
+  path: '/projects/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProjectsPostIdEditRoute = ProjectsPostIdEditRouteImport.update({
+const ProjectsIdProjectRoute = ProjectsIdProjectRouteImport.update({
+  id: '/projects/$idProject',
+  path: '/projects/$idProject',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProjectsIdProjectEditRoute = ProjectsIdProjectEditRouteImport.update({
   id: '/edit',
   path: '/edit',
-  getParentRoute: () => ProjectsPostIdRoute,
+  getParentRoute: () => ProjectsIdProjectRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/projects': typeof ProjectsRoute
-  '/projects/$postId': typeof ProjectsPostIdRouteWithChildren
-  '/projects/$postId/edit': typeof ProjectsPostIdEditRoute
+  '/projects/$idProject': typeof ProjectsIdProjectRouteWithChildren
+  '/projects': typeof ProjectsIndexRoute
+  '/projects/$idProject/edit': typeof ProjectsIdProjectEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/projects': typeof ProjectsRoute
-  '/projects/$postId': typeof ProjectsPostIdRouteWithChildren
-  '/projects/$postId/edit': typeof ProjectsPostIdEditRoute
+  '/projects/$idProject': typeof ProjectsIdProjectRouteWithChildren
+  '/projects': typeof ProjectsIndexRoute
+  '/projects/$idProject/edit': typeof ProjectsIdProjectEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/projects': typeof ProjectsRoute
-  '/projects_/$postId': typeof ProjectsPostIdRouteWithChildren
-  '/projects_/$postId/edit': typeof ProjectsPostIdEditRoute
+  '/projects/$idProject': typeof ProjectsIdProjectRouteWithChildren
+  '/projects/': typeof ProjectsIndexRoute
+  '/projects/$idProject/edit': typeof ProjectsIdProjectEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/projects' | '/projects/$postId' | '/projects/$postId/edit'
+  fullPaths:
+    | '/'
+    | '/projects/$idProject'
+    | '/projects'
+    | '/projects/$idProject/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/projects' | '/projects/$postId' | '/projects/$postId/edit'
+  to: '/' | '/projects/$idProject' | '/projects' | '/projects/$idProject/edit'
   id:
     | '__root__'
     | '/'
-    | '/projects'
-    | '/projects_/$postId'
-    | '/projects_/$postId/edit'
+    | '/projects/$idProject'
+    | '/projects/'
+    | '/projects/$idProject/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ProjectsRoute: typeof ProjectsRoute
-  ProjectsPostIdRoute: typeof ProjectsPostIdRouteWithChildren
+  ProjectsIdProjectRoute: typeof ProjectsIdProjectRouteWithChildren
+  ProjectsIndexRoute: typeof ProjectsIndexRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/projects': {
-      id: '/projects'
-      path: '/projects'
-      fullPath: '/projects'
-      preLoaderRoute: typeof ProjectsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
@@ -89,39 +86,45 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/projects_/$postId': {
-      id: '/projects_/$postId'
-      path: '/projects/$postId'
-      fullPath: '/projects/$postId'
-      preLoaderRoute: typeof ProjectsPostIdRouteImport
+    '/projects/': {
+      id: '/projects/'
+      path: '/projects'
+      fullPath: '/projects'
+      preLoaderRoute: typeof ProjectsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/projects_/$postId/edit': {
-      id: '/projects_/$postId/edit'
+    '/projects/$idProject': {
+      id: '/projects/$idProject'
+      path: '/projects/$idProject'
+      fullPath: '/projects/$idProject'
+      preLoaderRoute: typeof ProjectsIdProjectRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/projects/$idProject/edit': {
+      id: '/projects/$idProject/edit'
       path: '/edit'
-      fullPath: '/projects/$postId/edit'
-      preLoaderRoute: typeof ProjectsPostIdEditRouteImport
-      parentRoute: typeof ProjectsPostIdRoute
+      fullPath: '/projects/$idProject/edit'
+      preLoaderRoute: typeof ProjectsIdProjectEditRouteImport
+      parentRoute: typeof ProjectsIdProjectRoute
     }
   }
 }
 
-interface ProjectsPostIdRouteChildren {
-  ProjectsPostIdEditRoute: typeof ProjectsPostIdEditRoute
+interface ProjectsIdProjectRouteChildren {
+  ProjectsIdProjectEditRoute: typeof ProjectsIdProjectEditRoute
 }
 
-const ProjectsPostIdRouteChildren: ProjectsPostIdRouteChildren = {
-  ProjectsPostIdEditRoute: ProjectsPostIdEditRoute,
+const ProjectsIdProjectRouteChildren: ProjectsIdProjectRouteChildren = {
+  ProjectsIdProjectEditRoute: ProjectsIdProjectEditRoute,
 }
 
-const ProjectsPostIdRouteWithChildren = ProjectsPostIdRoute._addFileChildren(
-  ProjectsPostIdRouteChildren,
-)
+const ProjectsIdProjectRouteWithChildren =
+  ProjectsIdProjectRoute._addFileChildren(ProjectsIdProjectRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ProjectsRoute: ProjectsRoute,
-  ProjectsPostIdRoute: ProjectsPostIdRouteWithChildren,
+  ProjectsIdProjectRoute: ProjectsIdProjectRouteWithChildren,
+  ProjectsIndexRoute: ProjectsIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

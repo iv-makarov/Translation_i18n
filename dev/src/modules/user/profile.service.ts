@@ -5,21 +5,21 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { User } from 'db/entitis/User';
 import { Session } from 'db/entitis/Session';
+import { User } from 'db/entitis/User';
 import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 
 @Injectable()
 export class ProfileService {
   constructor(private readonly em: EntityManager) {}
 
-  async getProfile(id: string) {
-    const userId = await this.em.findOne(Session, { id });
-    console.log(userId);
-    if (!userId) {
-      throw new UnauthorizedException('User not found');
+  async getProfile(accessToken: string) {
+    const session = await this.em.findOne(Session, { accessToken });
+    console.log(session);
+    if (!session) {
+      throw new UnauthorizedException('Session not found');
     }
-    return userId;
+    return session.user;
   }
 
   async updateProfile(id: string, updateUserDto: Partial<RegisterDto>) {

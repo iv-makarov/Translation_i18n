@@ -23,8 +23,8 @@ export class TranslationsController {
   }
 
   @Get(':id')
-  async getTranslationsBySubProjectId(@Param('id') id: string) {
-    return this.translationsService.getTranslationsBySubProjectId(id);
+  async getTranslationsByProjectId(@Param('id') id: string) {
+    return this.translationsService.getTranslationsByProjectId(id);
   }
 
   @Post()

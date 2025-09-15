@@ -11,6 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger';
+import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
 import {
   CreateProjectResponseDto,
@@ -27,6 +28,7 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Get()
+  @Public()
   @ApiResponse({
     status: 200,
     description: 'Список проектов успешно получен',
@@ -79,14 +81,12 @@ export class ProjectsController {
       },
     },
   })
-  getProjectsByUser(
-    @Param('userId') userId: string,
-    @Query() filterProjectsDto: FilterProjectsDto,
-  ) {
-    return this.projectsService.getProjectsByUser(userId, filterProjectsDto);
+  getProjectsByUser(@Query() filterProjectsDto: FilterProjectsDto) {
+    return this.projectsService.getProjects(filterProjectsDto);
   }
 
   @Post()
+  @Public()
   @ApiBody({ type: CreateProjectDto })
   @ApiResponse({
     status: 201,
@@ -104,7 +104,6 @@ export class ProjectsController {
       },
     },
   })
-  @ApiBody({ type: CreateProjectDto })
   createProject(@Body() createProjectDto: CreateProjectDto) {
     return this.projectsService.createProject(createProjectDto);
   }

@@ -10,8 +10,8 @@ export class TranslationsService {
     return this.em.find(Translations, {});
   }
 
-  async getTranslationsBySubProjectId(subProjectId: string) {
-    return this.em.find(Translations, { subProject: subProjectId });
+  async getTranslationsByProjectId(projectId: string) {
+    return this.em.find(Translations, { project: projectId });
   }
 
   async createTranslation(translation: Translations) {

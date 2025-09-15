@@ -1,14 +1,12 @@
 import {
-  Collection,
   Entity,
   Index,
-  ManyToOne,
   OneToMany,
   PrimaryKey,
   Property,
 } from '@mikro-orm/core';
-import { SubProjects } from './SubProjects';
-import { User } from './User';
+import { NameSpace } from './NameSpace';
+import { WhiteUrl } from './WhiteUrl';
 
 @Entity()
 @Index({ properties: ['name'] })
@@ -35,11 +33,12 @@ export class Projects {
   @Property()
   isBlocked: boolean = false;
 
-  @ManyToOne(() => User, { nullable: false })
-  user: User;
+  @OneToMany(() => WhiteUrl, (whiteUrl) => whiteUrl.project)
+  whiteUrls: WhiteUrl[] = [];
 
-  @OneToMany(() => SubProjects, (subProject) => subProject.project, {
-    cascade: [],
-  })
-  subProjects = new Collection<SubProjects>(this);
+  @OneToMany(() => NameSpace, (nameSpace) => nameSpace.project)
+  nameSpaces: NameSpace[] = [];
+
+  // @ManyToOne(() => User, { nullable: true })
+  // user: User;
 }

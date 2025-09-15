@@ -4,10 +4,9 @@ import { ConfigModule } from '@nestjs/config';
 import mikroOrmConfig from 'db/config/mikro-orm.config';
 
 // Modules
-import { AuthModule } from '../auth/auth.module';
-import { UserModule } from '../profile/profile.module';
+// import { AuthModule } from '../auth/auth.module';
+// import { UserModule } from '../profile/profile.module';
 import { ProjectsModule } from '../projects/projects.module';
-import { SubProjectsModule } from '../subProjects/subProjects.module';
 import { TranslationsModule } from '../translations/translations.module';
 
 @Module({
@@ -24,10 +23,7 @@ import { TranslationsModule } from '../translations/translations.module';
       forceEntityConstructor: true,
       ensureDatabase: true,
     }),
-    AuthModule,
-    UserModule,
     ProjectsModule,
-    SubProjectsModule,
     TranslationsModule,
   ],
 })

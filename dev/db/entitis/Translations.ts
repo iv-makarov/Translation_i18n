@@ -5,11 +5,12 @@ import {
   PrimaryKey,
   Property,
 } from '@mikro-orm/core';
-import { SubProjects } from './SubProjects';
+import { NameSpace } from 'db/entitis/NameSpace';
+import { Projects } from 'db/entitis/Projects';
 
 @Entity()
-@Index({ properties: ['key', 'lang', 'namespace'] })
-@Index({ properties: ['subProject'] })
+@Index({ properties: ['key', 'lang', 'nameSpace'] })
+@Index({ properties: ['project'] })
 export class Translations {
   @PrimaryKey()
   id: string = crypto.randomUUID();
@@ -17,8 +18,8 @@ export class Translations {
   @Property()
   key: string;
 
-  @Property()
-  namespace: string;
+  @ManyToOne('NameSpace', { ref: true })
+  nameSpace: NameSpace;
 
   @Property()
   value: string;
@@ -35,6 +36,6 @@ export class Translations {
   @Property()
   isVerified: boolean = false;
 
-  @ManyToOne(() => SubProjects)
-  subProject: SubProjects;
+  @ManyToOne('Projects', { ref: true })
+  project: Projects;
 }

@@ -1,4 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Transform, Type } from 'class-transformer';
+import {
+  IsBoolean,
+  IsNumber,
+  IsOptional,
+  IsString,
+  Max,
+  Min,
+} from 'class-validator';
 
 export class FilterProjectsDto {
   @ApiProperty({
@@ -7,6 +16,10 @@ export class FilterProjectsDto {
     required: false,
     minimum: 1,
   })
+  @Transform(({ value }) => (value ? parseInt(String(value), 10) : 1))
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
   page: number = 1;
 
   @ApiProperty({
@@ -16,6 +29,11 @@ export class FilterProjectsDto {
     minimum: 1,
     maximum: 100,
   })
+  @Transform(({ value }) => (value ? parseInt(String(value), 10) : 10))
+  @Type(() => Number)
+  @IsNumber()
+  @Min(1)
+  @Max(100)
   limit: number = 10;
 
   @ApiProperty({
@@ -24,21 +42,31 @@ export class FilterProjectsDto {
     example: 'project',
     required: false,
   })
-  search: string = '';
+  @IsOptional()
+  @IsString()
+  search?: string;
 
   @ApiProperty({
     description: 'Фильтр по статусу верификации проекта',
     example: true,
     required: false,
   })
-  isVerified: boolean = false;
+  @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
+  @Type(() => Boolean)
+  @IsBoolean()
+  isVerified?: boolean;
 
   @ApiProperty({
     description: 'Фильтр по статусу блокировки проекта',
     example: false,
     required: false,
   })
-  isBlocked: boolean = false;
+  @IsOptional()
+  @Transform(({ value }) => value === 'true' || value === true)
+  @Type(() => Boolean)
+  @IsBoolean()
+  isBlocked?: boolean;
 }
 
 export class CreateProjectResponseDto {

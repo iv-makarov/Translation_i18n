@@ -9,7 +9,7 @@ import {
 } from '@nestjs/common';
 import type { Request } from 'express';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
-import { ProfileService } from 'src/modules/profile/profile.service';
+import { ProfileService } from 'src/modules/user/profile.service';
 import { RegisterDto } from '../auth/dto/register.dto';
 
 interface RequestWithUser extends Request {
