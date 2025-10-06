@@ -1,6 +1,6 @@
 import { createFileRoute, Link, useParams } from "@tanstack/react-router";
 
-export const Route = createFileRoute("/projects/$idProject")({
+export const Route = createFileRoute("/_protected/projects/$idProject")({
   component: RouteComponent,
 });
 

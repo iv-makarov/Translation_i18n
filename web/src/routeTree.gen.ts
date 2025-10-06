@@ -9,76 +9,134 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as PublickRouteImport } from './routes/_publick'
+import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as ProjectsIndexRouteImport } from './routes/projects/index'
-import { Route as ProjectsIdProjectRouteImport } from './routes/projects/$idProject'
-import { Route as ProjectsIdProjectEditRouteImport } from './routes/projects/$idProject.edit'
+import { Route as PublickRegisterRouteImport } from './routes/_publick/register'
+import { Route as PublickLoginRouteImport } from './routes/_publick/login'
+import { Route as ProtectedProjectsIndexRouteImport } from './routes/_protected/projects/index'
+import { Route as ProtectedProjectsIdProjectRouteImport } from './routes/_protected/projects/$idProject'
+import { Route as ProtectedProjectsIdProjectEditRouteImport } from './routes/_protected/projects/$idProject.edit'
 
+const PublickRoute = PublickRouteImport.update({
+  id: '/_publick',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProtectedRoute = ProtectedRouteImport.update({
+  id: '/_protected',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ProjectsIndexRoute = ProjectsIndexRouteImport.update({
+const PublickRegisterRoute = PublickRegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => PublickRoute,
+} as any)
+const PublickLoginRoute = PublickLoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => PublickRoute,
+} as any)
+const ProtectedProjectsIndexRoute = ProtectedProjectsIndexRouteImport.update({
   id: '/projects/',
   path: '/projects/',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => ProtectedRoute,
 } as any)
-const ProjectsIdProjectRoute = ProjectsIdProjectRouteImport.update({
-  id: '/projects/$idProject',
-  path: '/projects/$idProject',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ProjectsIdProjectEditRoute = ProjectsIdProjectEditRouteImport.update({
-  id: '/edit',
-  path: '/edit',
-  getParentRoute: () => ProjectsIdProjectRoute,
-} as any)
+const ProtectedProjectsIdProjectRoute =
+  ProtectedProjectsIdProjectRouteImport.update({
+    id: '/projects/$idProject',
+    path: '/projects/$idProject',
+    getParentRoute: () => ProtectedRoute,
+  } as any)
+const ProtectedProjectsIdProjectEditRoute =
+  ProtectedProjectsIdProjectEditRouteImport.update({
+    id: '/edit',
+    path: '/edit',
+    getParentRoute: () => ProtectedProjectsIdProjectRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/projects/$idProject': typeof ProjectsIdProjectRouteWithChildren
-  '/projects': typeof ProjectsIndexRoute
-  '/projects/$idProject/edit': typeof ProjectsIdProjectEditRoute
+  '/login': typeof PublickLoginRoute
+  '/register': typeof PublickRegisterRoute
+  '/projects/$idProject': typeof ProtectedProjectsIdProjectRouteWithChildren
+  '/projects': typeof ProtectedProjectsIndexRoute
+  '/projects/$idProject/edit': typeof ProtectedProjectsIdProjectEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/projects/$idProject': typeof ProjectsIdProjectRouteWithChildren
-  '/projects': typeof ProjectsIndexRoute
-  '/projects/$idProject/edit': typeof ProjectsIdProjectEditRoute
+  '/login': typeof PublickLoginRoute
+  '/register': typeof PublickRegisterRoute
+  '/projects/$idProject': typeof ProtectedProjectsIdProjectRouteWithChildren
+  '/projects': typeof ProtectedProjectsIndexRoute
+  '/projects/$idProject/edit': typeof ProtectedProjectsIdProjectEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/projects/$idProject': typeof ProjectsIdProjectRouteWithChildren
-  '/projects/': typeof ProjectsIndexRoute
-  '/projects/$idProject/edit': typeof ProjectsIdProjectEditRoute
+  '/_protected': typeof ProtectedRouteWithChildren
+  '/_publick': typeof PublickRouteWithChildren
+  '/_publick/login': typeof PublickLoginRoute
+  '/_publick/register': typeof PublickRegisterRoute
+  '/_protected/projects/$idProject': typeof ProtectedProjectsIdProjectRouteWithChildren
+  '/_protected/projects/': typeof ProtectedProjectsIndexRoute
+  '/_protected/projects/$idProject/edit': typeof ProtectedProjectsIdProjectEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/login'
+    | '/register'
     | '/projects/$idProject'
     | '/projects'
     | '/projects/$idProject/edit'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/projects/$idProject' | '/projects' | '/projects/$idProject/edit'
+  to:
+    | '/'
+    | '/login'
+    | '/register'
+    | '/projects/$idProject'
+    | '/projects'
+    | '/projects/$idProject/edit'
   id:
     | '__root__'
     | '/'
-    | '/projects/$idProject'
-    | '/projects/'
-    | '/projects/$idProject/edit'
+    | '/_protected'
+    | '/_publick'
+    | '/_publick/login'
+    | '/_publick/register'
+    | '/_protected/projects/$idProject'
+    | '/_protected/projects/'
+    | '/_protected/projects/$idProject/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  ProjectsIdProjectRoute: typeof ProjectsIdProjectRouteWithChildren
-  ProjectsIndexRoute: typeof ProjectsIndexRoute
+  ProtectedRoute: typeof ProtectedRouteWithChildren
+  PublickRoute: typeof PublickRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/_publick': {
+      id: '/_publick'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof PublickRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_protected': {
+      id: '/_protected'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof ProtectedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -86,45 +144,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/projects/': {
-      id: '/projects/'
+    '/_publick/register': {
+      id: '/_publick/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof PublickRegisterRouteImport
+      parentRoute: typeof PublickRoute
+    }
+    '/_publick/login': {
+      id: '/_publick/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof PublickLoginRouteImport
+      parentRoute: typeof PublickRoute
+    }
+    '/_protected/projects/': {
+      id: '/_protected/projects/'
       path: '/projects'
       fullPath: '/projects'
-      preLoaderRoute: typeof ProjectsIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedProjectsIndexRouteImport
+      parentRoute: typeof ProtectedRoute
     }
-    '/projects/$idProject': {
-      id: '/projects/$idProject'
+    '/_protected/projects/$idProject': {
+      id: '/_protected/projects/$idProject'
       path: '/projects/$idProject'
       fullPath: '/projects/$idProject'
-      preLoaderRoute: typeof ProjectsIdProjectRouteImport
-      parentRoute: typeof rootRouteImport
+      preLoaderRoute: typeof ProtectedProjectsIdProjectRouteImport
+      parentRoute: typeof ProtectedRoute
     }
-    '/projects/$idProject/edit': {
-      id: '/projects/$idProject/edit'
+    '/_protected/projects/$idProject/edit': {
+      id: '/_protected/projects/$idProject/edit'
       path: '/edit'
       fullPath: '/projects/$idProject/edit'
-      preLoaderRoute: typeof ProjectsIdProjectEditRouteImport
-      parentRoute: typeof ProjectsIdProjectRoute
+      preLoaderRoute: typeof ProtectedProjectsIdProjectEditRouteImport
+      parentRoute: typeof ProtectedProjectsIdProjectRoute
     }
   }
 }
 
-interface ProjectsIdProjectRouteChildren {
-  ProjectsIdProjectEditRoute: typeof ProjectsIdProjectEditRoute
+interface ProtectedProjectsIdProjectRouteChildren {
+  ProtectedProjectsIdProjectEditRoute: typeof ProtectedProjectsIdProjectEditRoute
 }
 
-const ProjectsIdProjectRouteChildren: ProjectsIdProjectRouteChildren = {
-  ProjectsIdProjectEditRoute: ProjectsIdProjectEditRoute,
+const ProtectedProjectsIdProjectRouteChildren: ProtectedProjectsIdProjectRouteChildren =
+  {
+    ProtectedProjectsIdProjectEditRoute: ProtectedProjectsIdProjectEditRoute,
+  }
+
+const ProtectedProjectsIdProjectRouteWithChildren =
+  ProtectedProjectsIdProjectRoute._addFileChildren(
+    ProtectedProjectsIdProjectRouteChildren,
+  )
+
+interface ProtectedRouteChildren {
+  ProtectedProjectsIdProjectRoute: typeof ProtectedProjectsIdProjectRouteWithChildren
+  ProtectedProjectsIndexRoute: typeof ProtectedProjectsIndexRoute
 }
 
-const ProjectsIdProjectRouteWithChildren =
-  ProjectsIdProjectRoute._addFileChildren(ProjectsIdProjectRouteChildren)
+const ProtectedRouteChildren: ProtectedRouteChildren = {
+  ProtectedProjectsIdProjectRoute: ProtectedProjectsIdProjectRouteWithChildren,
+  ProtectedProjectsIndexRoute: ProtectedProjectsIndexRoute,
+}
+
+const ProtectedRouteWithChildren = ProtectedRoute._addFileChildren(
+  ProtectedRouteChildren,
+)
+
+interface PublickRouteChildren {
+  PublickLoginRoute: typeof PublickLoginRoute
+  PublickRegisterRoute: typeof PublickRegisterRoute
+}
+
+const PublickRouteChildren: PublickRouteChildren = {
+  PublickLoginRoute: PublickLoginRoute,
+  PublickRegisterRoute: PublickRegisterRoute,
+}
+
+const PublickRouteWithChildren =
+  PublickRoute._addFileChildren(PublickRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  ProjectsIdProjectRoute: ProjectsIdProjectRouteWithChildren,
-  ProjectsIndexRoute: ProjectsIndexRoute,
+  ProtectedRoute: ProtectedRouteWithChildren,
+  PublickRoute: PublickRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

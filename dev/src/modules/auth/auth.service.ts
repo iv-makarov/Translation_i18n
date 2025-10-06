@@ -111,9 +111,10 @@ export class AuthService {
     await this.em.persistAndFlush(session);
 
     // return user and access token
-    const { ...userWithoutSensitiveData } = user;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { passwordHash, ...userWithoutPassword } = user;
     return {
-      user: userWithoutSensitiveData,
+      user: userWithoutPassword,
       tokens: { accessToken: access, refreshToken: refresh },
     };
   }

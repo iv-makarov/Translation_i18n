@@ -5,6 +5,7 @@ import { createRouter, RouterProvider } from "@tanstack/react-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { routeTree } from "./routeTree.gen";
+import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 
 // Создаем QueryClient
 const queryClient = new QueryClient({
@@ -29,6 +30,7 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
       <ReactQueryDevtools initialIsOpen={false} />
+      <TanStackRouterDevtools position="bottom-right" router={router} />
     </QueryClientProvider>
   </StrictMode>
 );
