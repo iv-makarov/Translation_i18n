@@ -13,8 +13,8 @@ import type { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-// import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 import { LoginDto } from 'src/modules/auth/dto/login.dto';
+import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 
 interface RequestWithUser extends Request {
   user?: {
@@ -31,21 +31,21 @@ export class AuthController {
   @Public()
   @Post('register')
   @HttpCode(HttpStatus.OK)
-  // async register(
-  //   @Body() registerDto: RegisterDto,
-  //   @Res({ passthrough: true }) res: Response,
-  // ) {
-  //   const { user, tokens } = await this.authService.register(registerDto);
+  async register(
+    @Body() registerDto: RegisterDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { user, tokens } = await this.authService.register(registerDto);
 
-  //   // Устанавливаем куки
-  //   this.setCookies(res, tokens);
+    // Устанавливаем куки
+    this.setCookies(res, tokens);
 
-  //   return {
-  //     message: 'User registered successfully',
-  //     user,
-  //     tokens,
-  //   };
-  // }
+    return {
+      message: 'User registered successfully',
+      user,
+    };
+  }
+
   @Public()
   @Post('login')
   @HttpCode(HttpStatus.OK)

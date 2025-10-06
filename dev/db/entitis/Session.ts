@@ -5,7 +5,7 @@ import {
   PrimaryKey,
   Property,
 } from '@mikro-orm/core';
-import { User } from './User';
+import { Users } from './Users';
 
 @Entity()
 export class Session {
@@ -13,9 +13,13 @@ export class Session {
   @PrimaryKey({ unique: true })
   accessToken: string;
 
+  // refresh token
+  @Property({ nullable: true })
+  refreshToken: string;
+
   // User ID
-  @ManyToOne(() => User, { nullable: false, cascade: [Cascade.REMOVE] })
-  user: User;
+  @ManyToOne(() => Users, { nullable: false, cascade: [Cascade.REMOVE] })
+  user: Users;
 
   // Device
   @Property({ nullable: true })

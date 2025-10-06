@@ -5,7 +5,7 @@ import {
   PrimaryKey,
   Property,
 } from '@mikro-orm/core';
-import { User } from './User';
+import { Users } from './Users';
 
 @Entity()
 export class PasswordResetToken {
@@ -14,8 +14,8 @@ export class PasswordResetToken {
   id: string = crypto.randomUUID();
 
   // User ID
-  @ManyToOne(() => User, { nullable: false, cascade: [Cascade.REMOVE] })
-  user: User;
+  @ManyToOne(() => Users, { nullable: false, cascade: [Cascade.REMOVE] })
+  user: Users;
 
   // Token Hash
   @Property({ nullable: false, type: 'text' })

@@ -1,22 +1,14 @@
-import {
-  Cascade,
-  Collection,
-  Entity,
-  OneToMany,
-  PrimaryKey,
-  Property,
-  Unique,
-} from '@mikro-orm/core';
+import { Entity, PrimaryKey, Property, Unique } from '@mikro-orm/core';
 import { ApiProperty } from '@nestjs/swagger';
-import { Projects } from './Projects';
 
 export enum UserRole {
+  OWNER = 'owner',
   ADMIN = 'admin',
   USER = 'user',
 }
 
 @Entity()
-export class User {
+export class Users {
   // ID
   @ApiProperty({
     description: 'User ID',
@@ -90,7 +82,6 @@ export class User {
   @Property({ nullable: false, type: 'date' })
   createdAt: Date = new Date();
 
-  // Updated At
   @ApiProperty({
     description: 'Updated At',
     example: '2021-01-01T00:00:00.000Z',
@@ -98,14 +89,17 @@ export class User {
   @Property({ nullable: false, type: 'date' })
   updatedAt: Date = new Date();
 
-  // Projects
   @ApiProperty({
-    description: 'Projects',
+    description: 'Project IDs',
+    example: ['123e4567-e89b-12d3-a456-426614174000'],
+  })
+  @Property({ type: 'json', nullable: true })
+  projectIds: string[] = [];
+
+  @ApiProperty({
+    description: 'Organization ID',
     example: '123e4567-e89b-12d3-a456-426614174000',
   })
-  // @OneToMany(() => Projects, (project) => project.user, {
-  //   orphanRemoval: true,
-  //   cascade: [Cascade.REMOVE],
-  // })
-  projects = new Collection<Projects>(this);
+  @Property({ nullable: false })
+  organizationId: string;
 }

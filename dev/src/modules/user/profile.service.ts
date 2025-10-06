@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
 import { Session } from 'db/entitis/Session';
-import { User } from 'db/entitis/User';
+import { Users } from 'db/entitis/Users';
 import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 
 @Injectable()
@@ -23,14 +23,14 @@ export class ProfileService {
   }
 
   async updateProfile(id: string, updateUserDto: Partial<RegisterDto>) {
-    const user = await this.em.findOne(User, { id, isActive: true });
+    const user = await this.em.findOne(Users, { id, isActive: true });
     if (!user) {
       throw new UnauthorizedException('User not found');
     }
 
     // Если обновляется email, проверяем уникальность
     if (updateUserDto.email && updateUserDto.email !== user.email) {
-      const existingUser = await this.em.findOne(User, {
+      const existingUser = await this.em.findOne(Users, {
         email: updateUserDto.email,
       });
       if (existingUser) {
@@ -52,7 +52,7 @@ export class ProfileService {
     oldPassword: string,
     newPassword: string,
   ) {
-    const user = await this.em.findOne(User, { id, isActive: true });
+    const user = await this.em.findOne(Users, { id, isActive: true });
     if (!user) {
       throw new UnauthorizedException('User not found');
     }

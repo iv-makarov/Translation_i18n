@@ -3,10 +3,12 @@ import { SqliteDriver } from '@mikro-orm/sqlite';
 
 // Entities
 import { NameSpace } from '../entitis/NameSpace';
+import { Organization } from '../entitis/Organization';
 import { PasswordResetToken } from '../entitis/PasswordResetToken';
 import { Projects } from '../entitis/Projects';
 import { Session } from '../entitis/Session';
 import { Translations } from '../entitis/Translations';
+import { Users } from '../entitis/Users';
 import { WhiteUrl } from '../entitis/WhiteUrl';
 
 const config: MikroOrmModuleOptions = {
@@ -19,6 +21,8 @@ const config: MikroOrmModuleOptions = {
     Session,
     NameSpace,
     WhiteUrl,
+    Organization,
+    Users,
   ],
   debug: true,
 };

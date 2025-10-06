@@ -6,8 +6,9 @@ import {
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcryptjs';
+import { Organization } from 'db/entitis/Organization';
 import { Session } from 'db/entitis/Session';
-import { User, UserRole } from 'db/entitis/User';
+import { UserRole, Users } from 'db/entitis/Users';
 import { jwtConfig, refreshTokenConfig } from 'src/config/jwt.config';
 import { LoginDto } from 'src/modules/auth/dto/login.dto';
 import { RegisterDto } from 'src/modules/auth/dto/register.dto';
@@ -31,11 +32,11 @@ export class AuthService {
   ) {}
 
   async register(registerDto: RegisterDto): Promise<{
-    user: Omit<User, 'passwordHash'>;
-    accessToken: string;
+    user: Omit<Users, 'passwordHash'>;
+    tokens: Tokens;
   }> {
     // check if user already exists
-    const existingUser = await this.em.findOne(User, {
+    const existingUser = await this.em.findOne(Users, {
       email: registerDto.email,
     });
     if (existingUser) {
@@ -45,18 +46,37 @@ export class AuthService {
     // hash password
     const hashedPassword = await bcrypt.hash(registerDto.password, 12);
 
+    const createOrganization: Organization = this.em.create(Organization, {
+      name: registerDto.organizationName,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      userIds: [],
+    });
+
+    await this.em.persistAndFlush(createOrganization);
+
     // create user
-    const user = this.em.create(User, {
+    const user = this.em.create(Users, {
       ...registerDto,
       passwordHash: hashedPassword,
-      role: UserRole.ADMIN,
+      role: UserRole.OWNER,
       isActive: true,
       isEmailVerified: false,
       createdAt: new Date(),
       updatedAt: new Date(),
+      organizationId: createOrganization.id,
+      projectIds: [],
     });
 
     await this.em.persistAndFlush(user);
+
+    // Добавляем ID пользователя в массив userIds организации
+    if (createOrganization.userIds) {
+      createOrganization.userIds.push(user.id);
+    } else {
+      createOrganization.userIds = [user.id];
+    }
+    await this.em.persistAndFlush(createOrganization);
 
     // const jti = crypto.randomUUID();
     const access = await this.jwtService.signAsync(
@@ -68,21 +88,22 @@ export class AuthService {
         issuer: 'your-app',
       },
     );
-    // const refresh = await this.jwtService.signAsync(
-    //   { sub: user.id, jti },
-    //   {
-    //     secret: process.env.RT_SECRET,
-    //     expiresIn: '30d',
-    //     audience: 'spa',
-    //     issuer: 'your-app',
-    //   },
-    // );
+    const refresh = await this.jwtService.signAsync(
+      { sub: user.id, jti: crypto.randomUUID() },
+      {
+        secret: process.env.RT_SECRET,
+        expiresIn: '7d',
+        audience: 'spa',
+        issuer: 'your-app',
+      },
+    );
 
     // create session
     const session = this.em.create(Session, {
       accessToken: access,
+      refreshToken: refresh,
       user: user.id,
-      expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
       revoked: false,
       createdAt: new Date(),
     });
@@ -91,17 +112,20 @@ export class AuthService {
 
     // return user and access token
     const { ...userWithoutSensitiveData } = user;
-    return { user: userWithoutSensitiveData, accessToken: access };
+    return {
+      user: userWithoutSensitiveData,
+      tokens: { accessToken: access, refreshToken: refresh },
+    };
   }
 
   async login(loginDto: LoginDto): Promise<{
-    user: Omit<User, 'passwordHash'>;
+    user: Omit<Users, 'passwordHash'>;
     tokens: Tokens;
   }> {
     // find user
-    const user = await this.em.findOne(User, { email: loginDto.email });
+    const user = await this.em.findOne(Users, { email: loginDto.email });
     if (!user) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('User not found');
     }
 
     // Проверяем активность пользователя
@@ -115,7 +139,7 @@ export class AuthService {
       user.passwordHash,
     );
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Invalid credentials');
+      throw new UnauthorizedException('Password is incorrect');
     }
 
     // Генерируем новые токены
@@ -193,8 +217,8 @@ export class AuthService {
   //   }
   // }
 
-  async validateUser(id: string): Promise<User | null> {
-    const user = await this.em.findOne(User, { id, isActive: true });
+  async validateUser(id: string): Promise<Users | null> {
+    const user = await this.em.findOne(Users, { id, isActive: true });
     return user;
   }
 
