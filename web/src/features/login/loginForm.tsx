@@ -3,9 +3,18 @@ import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
 import { Form, Formik } from "formik";
 import { useNavigate } from "@tanstack/react-router";
+import { toFormikValidationSchema } from "zod-formik-adapter";
+import { z } from "zod";
+
+const validationSchema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6),
+});
+
+type LoginFormValues = z.infer<typeof validationSchema>;
 
 interface LoginFormProps {
-  initialValues?: { email: string; password: string };
+  initialValues?: LoginFormValues;
   onSubmit: (values: { email: string; password: string }) => Promise<void>;
 }
 
@@ -16,6 +25,7 @@ export default function LoginForm({
   const navigate = useNavigate();
   return (
     <Formik
+      validationSchema={toFormikValidationSchema(validationSchema)}
       initialValues={initialValues}
       onSubmit={(values, { setSubmitting, resetForm }) => {
         onSubmit(values)
@@ -45,8 +55,9 @@ export default function LoginForm({
               <div className="flex items-center">
                 <Label htmlFor="password">Password</Label>
                 <Button
+                  type="button"
                   variant="link"
-                  className="ml-auto cursor-pointer text-sm p-0 hover:underline font-normal"
+                  className="ml-auto"
                   // onClick={() => navigate({to: "/password-recovery"})}
                 >
                   Forgot your password?
@@ -71,7 +82,8 @@ export default function LoginForm({
           <div className="text-center text-sm">
             Don&apos;t have an account?{" "}
             <Button
-              className="cursor-pointer text-sm p-0 hover:underline"
+              type="button"
+              className="pl-1.5"
               variant="link"
               onClick={() => navigate({ to: "/register" })}
             >

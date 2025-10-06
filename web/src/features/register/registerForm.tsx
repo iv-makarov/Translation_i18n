@@ -1,6 +1,7 @@
 import { Button } from "@/shared/components/ui/button";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
+import { useNavigate } from "@tanstack/react-router";
 import { Form, Formik } from "formik";
 import { z } from "zod";
 import { toFormikValidationSchema } from "zod-formik-adapter";
@@ -30,6 +31,7 @@ export default function RegisterForm({
   },
   onSubmit,
 }: RegisterFormProps) {
+  const navigate = useNavigate();
   return (
     <Formik
       validationSchema={toFormikValidationSchema(validationSchema)}
@@ -61,6 +63,7 @@ export default function RegisterForm({
               <Input
                 id="lastName"
                 type="text"
+                placeholder="Last Name"
                 required
                 value={values.lastName}
                 onChange={(e) => setFieldValue("lastName", e.target.value)}
@@ -71,6 +74,7 @@ export default function RegisterForm({
               <Input
                 id="firstName"
                 type="text"
+                placeholder="First Name"
                 required
                 value={values.firstName}
                 onChange={(e) => setFieldValue("firstName", e.target.value)}
@@ -81,6 +85,7 @@ export default function RegisterForm({
               <Input
                 id="email"
                 type="email"
+                placeholder="Email"
                 required
                 value={values.email}
                 onChange={(e) => setFieldValue("email", e.target.value)}
@@ -91,6 +96,7 @@ export default function RegisterForm({
               <Input
                 id="password"
                 type="password"
+                placeholder="Password"
                 required
                 value={values.password}
                 onChange={(e) => setFieldValue("password", e.target.value)}
@@ -105,10 +111,10 @@ export default function RegisterForm({
             </Button>
           </div>
           <div className="text-center text-sm">
-            Already have an account?{" "}
-            <a href="/login" className="underline underline-offset-4">
+            Already have an account?
+            <Button type="button" className="pl-1.5" variant="link" onClick={() => navigate({ to: "/login" })}>
               Login
-            </a>
+            </Button>
           </div>
         </Form>
       )}
