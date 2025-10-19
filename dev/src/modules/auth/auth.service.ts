@@ -78,30 +78,13 @@ export class AuthService {
     }
     await this.em.persistAndFlush(createOrganization);
 
-    // const jti = crypto.randomUUID();
-    const access = await this.jwtService.signAsync(
-      { sub: user.id },
-      {
-        secret: process.env.AT_SECRET,
-        expiresIn: '15m',
-        audience: 'spa',
-        issuer: 'your-app',
-      },
-    );
-    const refresh = await this.jwtService.signAsync(
-      { sub: user.id, jti: crypto.randomUUID() },
-      {
-        secret: process.env.RT_SECRET,
-        expiresIn: '7d',
-        audience: 'spa',
-        issuer: 'your-app',
-      },
-    );
+    // Генерируем токены используя общий метод
+    const tokens = await this.generateTokens(user.id, user.email, user.role);
 
     // create session
     const session = this.em.create(Session, {
-      accessToken: access,
-      refreshToken: refresh,
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
       user: user.id,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
       revoked: false,
@@ -115,7 +98,7 @@ export class AuthService {
     const { passwordHash, ...userWithoutPassword } = user;
     return {
       user: userWithoutPassword,
-      tokens: { accessToken: access, refreshToken: refresh },
+      tokens,
     };
   }
 
@@ -146,9 +129,20 @@ export class AuthService {
     // Генерируем новые токены
     const tokens = await this.generateTokens(user.id, user.email, user.role);
 
+    // Создаем новую сессию
+    const session = this.em.create(Session, {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      user: user.id,
+      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+      revoked: false,
+      createdAt: new Date(),
+    });
+
     // Обновляем время последнего входа
     user.updatedAt = new Date();
-    await this.em.persistAndFlush(user);
+
+    await this.em.persistAndFlush([user, session]);
 
     // Возвращаем пользователя без пароля
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -156,67 +150,82 @@ export class AuthService {
     return { user: userWithoutSensitiveData, tokens };
   }
 
-  // async refreshToken(refreshTokenDto: RefreshTokenDto): Promise<Tokens> {
-  //   try {
-  //     // Верифицируем refresh token
-  //     const payload = await this.jwtService.verifyAsync<JwtPayload>(
-  //       refreshTokenDto.refreshToken,
-  //       {
-  //         secret: refreshTokenConfig.secret,
-  //       },
-  //     );
+  async refreshToken(refreshToken: string): Promise<Tokens> {
+    try {
+      // Верифицируем refresh token
+      const payload = await this.jwtService.verifyAsync<JwtPayload>(
+        refreshToken,
+        {
+          secret: refreshTokenConfig.secret,
+        },
+      );
 
-  //     // Находим пользователя
-  //     const user = await this.em.findOne(User, { id: payload.sub });
-  //     if (!user || !user.isActive) {
-  //       throw new UnauthorizedException('User not found or inactive');
-  //     }
+      // Находим сессию по refresh token
+      const session = await this.em.findOne(Session, {
+        refreshToken,
+        revoked: false,
+      });
 
-  //     // Проверяем, что refresh token в базе совпадает с переданным
-  //     const isRefreshTokenValid = await bcrypt.compare(
-  //       refreshTokenDto.refreshToken,
-  //       user.refreshToken || '',
-  //     );
-  //     if (!isRefreshTokenValid) {
-  //       throw new UnauthorizedException('Invalid refresh token');
-  //     }
+      if (!session) {
+        throw new UnauthorizedException('Session not found or revoked');
+      }
 
-  //     // Генерируем новые токены
-  //     const tokens = await this.generateTokens(user.id, user.email, user.role);
+      // Проверяем, что сессия не истекла
+      if (session.expiresAt < new Date()) {
+        // Отзываем истекшую сессию
+        session.revoked = true;
+        await this.em.persistAndFlush(session);
+        throw new UnauthorizedException('Session expired');
+      }
 
-  //     // Обновляем refresh token в базе
-  //     user.refreshToken = await bcrypt.hash(tokens.refreshToken, 12);
-  //     user.updatedAt = new Date();
-  //     await this.em.persistAndFlush(user);
+      // Находим пользователя
+      const user = await this.em.findOne(Users, { id: payload.sub });
+      if (!user || !user.isActive) {
+        throw new UnauthorizedException('User not found or inactive');
+      }
 
-  //     return tokens;
-  //   } catch {
-  //     throw new UnauthorizedException('Invalid refresh token');
-  //   }
-  // }
+      // Генерируем новые токены
+      const tokens = await this.generateTokens(user.id, user.email, user.role);
 
-  // async logout(logoutDto: LogoutDto): Promise<void> {
-  //   try {
-  //     // Верифицируем refresh token
-  //     const payload = await this.jwtService.verifyAsync<JwtPayload>(
-  //       logoutDto.refreshToken,
-  //       {
-  //         secret: refreshTokenConfig.secret,
-  //       },
-  //     );
+      // Обновляем сессию с новыми токенами
+      session.accessToken = tokens.accessToken;
+      session.refreshToken = tokens.refreshToken;
+      session.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
 
-  //     // Находим пользователя
-  //     const user = await this.em.findOne(User, { id: payload.sub });
-  //     if (user) {
-  //       // Очищаем refresh token
-  //       user.refreshToken = undefined;
-  //       user.updatedAt = new Date();
-  //       await this.em.persistAndFlush(user);
-  //     }
-  //   } catch {
-  //     // Игнорируем ошибки при logout
-  //   }
-  // }
+      await this.em.persistAndFlush(session);
+
+      return tokens;
+    } catch (error) {
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
+  async logout(
+    accessToken: string | undefined,
+    refreshToken: string | undefined,
+  ): Promise<void> {
+    try {
+      // Ищем сессию по accessToken или refreshToken
+      const session = await this.em.findOne(Session, {
+        $or: [
+          accessToken ? { accessToken } : {},
+          refreshToken ? { refreshToken } : {},
+        ],
+      });
+
+      if (session) {
+        // Отзываем сессию
+        session.revoked = true;
+        await this.em.persistAndFlush(session);
+      }
+    } catch {
+      // Игнорируем ошибки при logout
+      // Даже если произошла ошибка, мы все равно очистим cookies на клиенте
+    }
+  }
 
   async validateUser(id: string): Promise<Users | null> {
     const user = await this.em.findOne(Users, { id, isActive: true });

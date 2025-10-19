@@ -2,10 +2,16 @@ import { MikroORM } from '@mikro-orm/sqlite';
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import cookieParser from 'cookie-parser';
+import * as fs from 'fs';
+import * as path from 'path';
 import { AppModule } from './modules/app/app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+
+  // Cookie Parser - ВАЖНО для работы с cookies
+  app.use(cookieParser());
 
   // Глобальная валидация
   app.useGlobalPipes(
@@ -48,13 +54,46 @@ async function bootstrap() {
       'JWT-auth',
     )
     .build();
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, documentFactory, {
+
+  const document = SwaggerModule.createDocument(app, config);
+
+  // Setup Swagger UI
+  SwaggerModule.setup('api', app, document, {
     jsonDocumentUrl: '/api.json',
   });
 
+  // Автоматическая генерация swagger.json для фронтенда
+  // Генерируем всегда в dev режиме (когда не production)
+  if (process.env.NODE_ENV !== 'production') {
+    try {
+      // Используем process.cwd() для получения корневой директории проекта
+      // и поднимаемся на уровень выше (из dev в root)
+      const outputPath = path.join(
+        process.cwd(),
+        '../web/src/shared/api/generatedApi.json',
+      );
+
+      // Создаем директорию если её нет
+      const dir = path.dirname(outputPath);
+      if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+      }
+
+      // Сохраняем swagger спецификацию
+      fs.writeFileSync(outputPath, JSON.stringify(document, null, 2));
+
+      console.log(`✅ OpenAPI спецификация сохранена: ${outputPath}`);
+    } catch (error) {
+      console.error('❌ Ошибка при сохранении OpenAPI спецификации:', error);
+    }
+  }
+
   // Start server
-  await app.listen(process.env.PORT ?? 3000);
+  const port = process.env.PORT ?? 3000;
+  await app.listen(port);
+  console.log(`🚀 Сервер запущен на http://localhost:${port}`);
+  console.log(`📚 Swagger UI: http://localhost:${port}/api`);
+  console.log(`📄 OpenAPI JSON: http://localhost:${port}/api.json`);
 }
 
 void bootstrap();

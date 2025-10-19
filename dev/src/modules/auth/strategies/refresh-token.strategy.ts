@@ -1,6 +1,6 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
-import { ExtractJwt, Strategy } from 'passport-jwt';
+import { Strategy } from 'passport-jwt';
 import { refreshTokenConfig } from 'src/config/jwt.config';
 
 export interface RefreshTokenPayload {
@@ -11,6 +11,21 @@ export interface RefreshTokenPayload {
   exp: number;
 }
 
+interface RequestWithCookies {
+  cookies: {
+    accessToken?: string;
+    refreshToken?: string;
+  };
+}
+
+// Функция для извлечения refresh token из cookies
+const extractRefreshTokenFromCookie = (
+  req: RequestWithCookies,
+): string | null => {
+  const token = req.cookies.refreshToken;
+  return token || null;
+};
+
 @Injectable()
 export class RefreshTokenStrategy extends PassportStrategy(
   Strategy,
@@ -18,9 +33,10 @@ export class RefreshTokenStrategy extends PassportStrategy(
 ) {
   constructor() {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: extractRefreshTokenFromCookie,
       ignoreExpiration: false,
       secretOrKey: refreshTokenConfig.secret,
+      passReqToCallback: false,
     });
   }
 

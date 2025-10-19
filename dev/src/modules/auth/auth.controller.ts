@@ -4,15 +4,18 @@ import {
   HttpCode,
   HttpStatus,
   Post,
+  Req,
   Res,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import type { Request, Response } from 'express';
-import { AuthService } from './auth.service';
-import { Public } from './decorators/public.decorator';
+import type { Response } from 'express';
 import { LoginDto } from 'src/modules/auth/dto/login.dto';
 import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
+import { AuthService } from './auth.service';
+import { Public } from './decorators/public.decorator';
+import type { RequestWithCookies } from './interfaces/request-with-cookies.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -52,20 +55,27 @@ export class AuthController {
     };
   }
 
+  @Public()
   @Post('refresh')
   @HttpCode(HttpStatus.OK)
   async refreshToken(
-    @Body() refreshTokenDto: RefreshTokenDto,
+    @Req() req: RequestWithCookies,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const tokens = await this.authService.refreshToken(refreshTokenDto);
+    // Извлекаем refresh token из cookies
+    const refreshToken = req.cookies.refreshToken;
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('Refresh token not found');
+    }
+
+    const tokens = await this.authService.refreshToken(refreshToken);
 
     // Обновляем куки
     this.setCookies(res, tokens);
 
     return {
       message: 'Token refreshed successfully',
-      tokens,
     };
   }
 
@@ -73,10 +83,14 @@ export class AuthController {
   @Post('logout')
   @HttpCode(HttpStatus.OK)
   async logout(
-    @Body() logoutDto: LogoutDto,
+    @Req() req: RequestWithCookies,
     @Res({ passthrough: true }) res: Response,
   ) {
-    await this.authService.logout(logoutDto);
+    // Извлекаем токены из cookies
+    const accessToken = req.cookies.accessToken;
+    const refreshToken = req.cookies.refreshToken;
+
+    await this.authService.logout(accessToken, refreshToken);
 
     // Очищаем куки
     this.clearCookies(res);
