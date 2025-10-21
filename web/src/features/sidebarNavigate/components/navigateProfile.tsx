@@ -1,8 +1,5 @@
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@/shared/components/ui/avatar";
+import { useAuthContext } from "@/processes/authProvider/authProvider";
+import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,6 +14,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/shared/components/ui/sidebar";
+import { useNavigate } from "@tanstack/react-router";
 import {
   BadgeCheck,
   Bell,
@@ -27,13 +25,22 @@ import {
 } from "lucide-react";
 
 export default function NavigateProfile() {
-  const user = {
-    name: "John Doe",
-    email: "john.doe@example.com",
-    avatar: "https://github.com/shadcn.png",
+  const { user, logout } = useAuthContext();
+  const navigate = useNavigate();
+  const isMobile = false;
+
+  const handleLogout = async () => {
+    await logout();
+    navigate({ to: "/login" });
   };
 
-  const isMobile = false;
+  // Формируем инициалы для аватара
+  const userInitials = user
+    ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase()
+    : "??";
+
+  const userName = user ? `${user.firstName} ${user.lastName}` : "Загрузка...";
+  const userEmail = user?.email || "";
 
   return (
     <SidebarMenu>
@@ -45,12 +52,13 @@ export default function NavigateProfile() {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="h-8 w-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">
+                  {userInitials}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-medium">{userName}</span>
+                <span className="truncate text-xs">{userEmail}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -64,12 +72,13 @@ export default function NavigateProfile() {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">
+                    {userInitials}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-medium">{userName}</span>
+                  <span className="truncate text-xs">{userEmail}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -96,9 +105,9 @@ export default function NavigateProfile() {
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={handleLogout}>
               <LogOut />
-              Log out
+              Выйти
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

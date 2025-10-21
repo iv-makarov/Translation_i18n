@@ -7,7 +7,7 @@ import mikroOrmConfig from 'db/config/mikro-orm.config';
 import { AuthModule } from '../auth/auth.module';
 import { ProjectsModule } from '../projects/projects.module';
 import { TranslationsModule } from '../translations/translations.module';
-import { ProfileModule } from '../user/profile.module';
+import { UserModule } from '../user/user.module';
 
 @Module({
   imports: [
@@ -24,7 +24,7 @@ import { ProfileModule } from '../user/profile.module';
       ensureDatabase: true,
     }),
     AuthModule,
-    ProfileModule,
+    UserModule,
     ProjectsModule,
     TranslationsModule,
   ],

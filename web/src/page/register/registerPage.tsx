@@ -1,4 +1,5 @@
 import RegisterForm from "@/features/register/registerForm";
+import { api } from "@/shared/api/$api";
 import {
   Card,
   CardTitle,
@@ -7,6 +8,7 @@ import {
   CardDescription,
 } from "@/shared/components/ui/card";
 import AuthWrapper from "@/widgets/wrappers/authWrapper";
+import { toast } from "sonner";
 
 export default function RegisterPage() {
   return (
@@ -20,7 +22,15 @@ export default function RegisterPage() {
           <CardContent>
             <RegisterForm
               onSubmit={async (values) => {
-                await console.log(values);
+                const response = await api
+                  .post("/auth/register", values)
+                  .then((response) => {
+                    toast.success(response.data.message);
+                  })
+                  .catch((error) => {
+                    toast.error(error.response.data.message);
+                  });
+                return response;
               }}
             />
           </CardContent>

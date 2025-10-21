@@ -1,4 +1,6 @@
 import LoginForm from "@/features/login/loginForm";
+import { useAuthContext } from "@/processes/authProvider/authProvider";
+import { api } from "@/shared/api/$api";
 import {
   Card,
   CardContent,
@@ -7,20 +9,35 @@ import {
   CardTitle,
 } from "@/shared/components/ui/card";
 import AuthWrapper from "@/widgets/wrappers/authWrapper";
+import { useNavigate } from "@tanstack/react-router";
+import { toast } from "sonner";
 
 export default function LoginPage() {
+  const { checkAuth } = useAuthContext();
+  const navigate = useNavigate();
+
   return (
     <AuthWrapper>
       <div className="flex flex-col gap-6">
         <Card>
           <CardHeader className="text-center">
-            <CardTitle className="text-xl">Welcome back</CardTitle>
-            <CardDescription>Login with your account</CardDescription>
+            <CardTitle className="text-xl">Добро пожаловать</CardTitle>
+            <CardDescription>Войдите в свой аккаунт</CardDescription>
           </CardHeader>
           <CardContent>
             <LoginForm
               onSubmit={async (values) => {
-                await console.log(values);
+                try {
+                  await api.post("/auth/login", values);
+                  // После успешного логина проверяем авторизацию
+                  await checkAuth();
+                  // Редирект произойдет автоматически через _publick.tsx
+                  toast.success("Вы успешно вошли в систему");
+                  navigate({ to: "/projects" });
+                } catch (error) {
+                  console.error("Login error:", error);
+                  toast.error("Ошибка входа. Проверьте email и пароль.");
+                }
               }}
             />
           </CardContent>

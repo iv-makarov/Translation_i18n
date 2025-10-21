@@ -10,7 +10,7 @@ import { Users } from 'db/entitis/Users';
 import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 
 @Injectable()
-export class ProfileService {
+export class UserService {
   constructor(private readonly em: EntityManager) {}
 
   async getProfile(accessToken: string) {
