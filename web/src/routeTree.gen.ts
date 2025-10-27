@@ -14,6 +14,8 @@ import { Route as ProtectedRouteImport } from './routes/_protected'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as PublickRegisterRouteImport } from './routes/_publick/register'
 import { Route as PublickLoginRouteImport } from './routes/_publick/login'
+import { Route as ProtectedDashboardRouteImport } from './routes/_protected/dashboard'
+import { Route as ProtectedAccountRouteImport } from './routes/_protected/account'
 import { Route as ProtectedProjectsIndexRouteImport } from './routes/_protected/projects/index'
 import { Route as ProtectedProjectsIdProjectRouteImport } from './routes/_protected/projects/$idProject'
 import { Route as ProtectedProjectsIdProjectEditRouteImport } from './routes/_protected/projects/$idProject.edit'
@@ -41,6 +43,16 @@ const PublickLoginRoute = PublickLoginRouteImport.update({
   path: '/login',
   getParentRoute: () => PublickRoute,
 } as any)
+const ProtectedDashboardRoute = ProtectedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => ProtectedRoute,
+} as any)
+const ProtectedAccountRoute = ProtectedAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => ProtectedRoute,
+} as any)
 const ProtectedProjectsIndexRoute = ProtectedProjectsIndexRouteImport.update({
   id: '/projects/',
   path: '/projects/',
@@ -61,6 +73,8 @@ const ProtectedProjectsIdProjectEditRoute =
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/account': typeof ProtectedAccountRoute
+  '/dashboard': typeof ProtectedDashboardRoute
   '/login': typeof PublickLoginRoute
   '/register': typeof PublickRegisterRoute
   '/projects/$idProject': typeof ProtectedProjectsIdProjectRouteWithChildren
@@ -69,6 +83,8 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/account': typeof ProtectedAccountRoute
+  '/dashboard': typeof ProtectedDashboardRoute
   '/login': typeof PublickLoginRoute
   '/register': typeof PublickRegisterRoute
   '/projects/$idProject': typeof ProtectedProjectsIdProjectRouteWithChildren
@@ -80,6 +96,8 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_protected': typeof ProtectedRouteWithChildren
   '/_publick': typeof PublickRouteWithChildren
+  '/_protected/account': typeof ProtectedAccountRoute
+  '/_protected/dashboard': typeof ProtectedDashboardRoute
   '/_publick/login': typeof PublickLoginRoute
   '/_publick/register': typeof PublickRegisterRoute
   '/_protected/projects/$idProject': typeof ProtectedProjectsIdProjectRouteWithChildren
@@ -90,6 +108,8 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/account'
+    | '/dashboard'
     | '/login'
     | '/register'
     | '/projects/$idProject'
@@ -98,6 +118,8 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/account'
+    | '/dashboard'
     | '/login'
     | '/register'
     | '/projects/$idProject'
@@ -108,6 +130,8 @@ export interface FileRouteTypes {
     | '/'
     | '/_protected'
     | '/_publick'
+    | '/_protected/account'
+    | '/_protected/dashboard'
     | '/_publick/login'
     | '/_publick/register'
     | '/_protected/projects/$idProject'
@@ -158,6 +182,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublickLoginRouteImport
       parentRoute: typeof PublickRoute
     }
+    '/_protected/dashboard': {
+      id: '/_protected/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof ProtectedDashboardRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
+    '/_protected/account': {
+      id: '/_protected/account'
+      path: '/account'
+      fullPath: '/account'
+      preLoaderRoute: typeof ProtectedAccountRouteImport
+      parentRoute: typeof ProtectedRoute
+    }
     '/_protected/projects/': {
       id: '/_protected/projects/'
       path: '/projects'
@@ -197,11 +235,15 @@ const ProtectedProjectsIdProjectRouteWithChildren =
   )
 
 interface ProtectedRouteChildren {
+  ProtectedAccountRoute: typeof ProtectedAccountRoute
+  ProtectedDashboardRoute: typeof ProtectedDashboardRoute
   ProtectedProjectsIdProjectRoute: typeof ProtectedProjectsIdProjectRouteWithChildren
   ProtectedProjectsIndexRoute: typeof ProtectedProjectsIndexRoute
 }
 
 const ProtectedRouteChildren: ProtectedRouteChildren = {
+  ProtectedAccountRoute: ProtectedAccountRoute,
+  ProtectedDashboardRoute: ProtectedDashboardRoute,
   ProtectedProjectsIdProjectRoute: ProtectedProjectsIdProjectRouteWithChildren,
   ProtectedProjectsIndexRoute: ProtectedProjectsIndexRoute,
 }

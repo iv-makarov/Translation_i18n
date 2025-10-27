@@ -14,12 +14,12 @@ export default function NavigateMain() {
     {
       title: "Dashboard",
       icon: Home,
-      path: "/",
+      path: "/dashboard",
     },
     {
       title: "Projects",
       icon: FileText,
-      path: "/projects",
+        path: "/projects",
     },
   ];
   return (
