@@ -13,16 +13,26 @@ import { RegisterDto } from 'src/modules/auth/dto/register.dto';
 export class UserService {
   constructor(private readonly em: EntityManager) {}
 
-  async getProfile(accessToken: string) {
-    const session = await this.em.findOne(Session, { accessToken });
-    console.log(session);
+  async getProfile(accessToken: string): Promise<Omit<Users, 'passwordHash'>> {
+    const session = await this.em.findOne(
+      Session,
+      { accessToken },
+      { populate: ['user'] },
+    );
     if (!session) {
       throw new UnauthorizedException('Session not found');
     }
-    return session.user;
+
+    // Возвращаем пользователя без пароля
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { passwordHash, ...userWithoutPassword } = session.user;
+    return userWithoutPassword;
   }
 
-  async updateProfile(id: string, updateUserDto: Partial<RegisterDto>) {
+  async updateProfile(
+    id: string,
+    updateUserDto: Partial<RegisterDto>,
+  ): Promise<Omit<Users, 'passwordHash'>> {
     const user = await this.em.findOne(Users, { id, isActive: true });
     if (!user) {
       throw new UnauthorizedException('User not found');
@@ -44,7 +54,11 @@ export class UserService {
     if (updateUserDto.email) user.email = updateUserDto.email;
 
     await this.em.persistAndFlush(user);
-    return user;
+
+    // Возвращаем пользователя без пароля
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { passwordHash, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   async updateUserPassword(

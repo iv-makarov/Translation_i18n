@@ -5,14 +5,15 @@ import {
   Param,
   Put,
   Req,
+  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
-import type { Request } from 'express';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
+import { RequestWithCookies } from 'src/modules/auth/interfaces/request-with-cookies.interface';
 import { UserService } from 'src/modules/user/user.service';
 import { RegisterDto } from '../auth/dto/register.dto';
 
-interface RequestWithUser extends Request {
+interface RequestWithUser extends RequestWithCookies {
   user?: {
     id: string;
     email: string;
@@ -27,7 +28,11 @@ export class UserController {
 
   @Get('profile')
   async getProfile(@Req() req: RequestWithUser) {
-    return this.userService.getProfile(req.user?.id || '');
+    const accessToken = req.cookies?.accessToken;
+    if (!accessToken) {
+      throw new UnauthorizedException('Access token not found');
+    }
+    return this.userService.getProfile(accessToken);
   }
 
   @Put(':id')

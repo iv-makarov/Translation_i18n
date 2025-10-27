@@ -1,4 +1,5 @@
-import { FilterProjectsDto, projectsApi } from "@/shared/api/$api";
+import type { FilterProjectsDto } from "@/shared/api/$api";
+import { projectsApi } from "@/shared/api/$api";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Ключи для кэширования

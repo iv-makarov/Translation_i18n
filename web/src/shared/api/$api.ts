@@ -11,6 +11,32 @@ export const api = axios.create({
   },
 });
 
+// Типы для фильтров проектов
+export interface FilterProjectsDto {
+  page?: number;
+  limit?: number;
+  search?: string;
+  isVerified?: boolean;
+  isBlocked?: boolean;
+}
+
+// API для работы с проектами
+export const projectsApi = {
+  getProjects: (filters?: FilterProjectsDto) =>
+    api.get("/projects", { params: filters }).then((res) => res.data),
+
+  getProjectsByUser: (userId: string, filters?: FilterProjectsDto) =>
+    api
+      .get(`/projects/user/${userId}`, { params: filters })
+      .then((res) => res.data),
+
+  createProject: (data: { name: string; description?: string }) =>
+    api.post("/projects", data).then((res) => res.data),
+
+  deleteProject: (id: string) =>
+    api.delete(`/projects/${id}`).then((res) => res.data),
+};
+
 // Флаг для предотвращения бесконечного цикла refresh
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
