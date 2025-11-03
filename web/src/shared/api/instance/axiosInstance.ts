@@ -9,17 +9,17 @@ export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 // Создаем экземпляр axios с базовой конфигурацией
 const instance = axios.create({
   baseURL: API_URL,
-  withCredentials: true, // 👈 КРИТИЧЕСКИ ВАЖНО для отправки cookies
+  withCredentials: true, // для отправки cookies
   headers: {
     "Content-Type": "application/json",
   },
 });
 
-// Флаг для предотвращения бесконечного цикла refresh
+// Флаг для предотвращения бесконечного цикла обновления токена
 let isRefreshing = false;
 let refreshSubscribers: ((token: string) => void)[] = [];
 
-// Функция для подписки на обновление токена
+// Подписка на обновление токена
 const subscribeTokenRefresh = (cb: (token: string) => void) => {
   refreshSubscribers.push(cb);
 };
@@ -77,9 +77,6 @@ instance.interceptors.response.use(
         // Refresh не удался - пользователь не авторизован
         isRefreshing = false;
         refreshSubscribers = [];
-
-        // Просто отклоняем ошибку - роутинг сам разберется через _protected/_publick
-        // НЕ используем window.location.href - это вызывает перезагрузку и бесконечный цикл
         return Promise.reject(refreshError);
       }
     }
@@ -88,12 +85,11 @@ instance.interceptors.response.use(
   }
 );
 
-// Функция-мутатор для orval
+// Функция для orval
 export const axiosInstance = async <T = unknown, D = unknown>(
   config: AxiosRequestConfig<D>
 ): Promise<AxiosResponse<T>> => {
   return instance.request<T, AxiosResponse<T>, D>(config);
 };
 
-// Тип для ошибок
 export type ErrorType<Error> = AxiosError<Error>;
