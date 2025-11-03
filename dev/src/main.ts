@@ -3,6 +3,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import cookieParser from 'cookie-parser';
+import * as fs from 'fs';
 import { AppModule } from './modules/app/app.module';
 
 async function bootstrap() {
@@ -45,15 +46,19 @@ async function bootstrap() {
         type: 'http',
         scheme: 'bearer',
         bearerFormat: 'JWT',
-        name: 'JWT',
-        description: 'Enter JWT token',
-        in: 'header',
       },
       'JWT-auth',
     )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+
+  // Сохраняем Swagger документацию в JSON файл
+
+  fs.writeFileSync(
+    '../web/src/shared/api/swagger.json', // FIXME: Переписать потом под путь в env
+    JSON.stringify(document, null, 2),
+  );
 
   // Setup Swagger UI
   SwaggerModule.setup('api', app, document, {

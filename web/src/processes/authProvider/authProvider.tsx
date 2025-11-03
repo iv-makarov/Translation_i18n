@@ -1,5 +1,5 @@
 import { useAuth } from "@/shared/hooks/useAuth";
-import { createContext, ReactNode, useContext } from "react";
+import { createContext, type ReactNode, useContext } from "react";
 
 interface User {
   id: string;
@@ -36,4 +36,3 @@ export function useAuthContext() {
   }
   return context;
 }
-

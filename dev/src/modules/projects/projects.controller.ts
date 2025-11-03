@@ -33,24 +33,6 @@ export class ProjectsController {
     status: 200,
     description: 'Список проектов успешно получен',
     type: ProjectsListResponseDto,
-    schema: {
-      example: {
-        data: [
-          {
-            id: 'ca2b82f0-e49c-42ad-a105-b76043ea425b',
-            name: 'Мой проект',
-            description: 'Описание моего проекта',
-            createdAt: '2024-01-15T10:30:00.000Z',
-            updatedAt: '2024-01-15T10:30:00.000Z',
-            isVerified: false,
-            isBlocked: false,
-          },
-        ],
-        total: 25,
-        page: 1,
-        limit: 10,
-      },
-    },
   })
   getProjects(@Query() filterProjectsDto: FilterProjectsDto) {
     return this.projectsService.getProjects(filterProjectsDto);
@@ -62,24 +44,6 @@ export class ProjectsController {
     status: 200,
     description: 'Список проектов пользователя успешно получен',
     type: ProjectsListResponseDto,
-    schema: {
-      example: {
-        data: [
-          {
-            id: 'ca2b82f0-e49c-42ad-a105-b76043ea425b',
-            name: 'Мой проект',
-            description: 'Описание моего проекта',
-            createdAt: '2024-01-15T10:30:00.000Z',
-            updatedAt: '2024-01-15T10:30:00.000Z',
-            isVerified: false,
-            isBlocked: false,
-          },
-        ],
-        total: 5,
-        page: 1,
-        limit: 10,
-      },
-    },
   })
   getProjectsByUser(@Query() filterProjectsDto: FilterProjectsDto) {
     return this.projectsService.getProjects(filterProjectsDto);
@@ -92,17 +56,6 @@ export class ProjectsController {
     status: 201,
     description: 'Проект успешно создан',
     type: CreateProjectResponseDto,
-    schema: {
-      example: {
-        id: 'ca2b82f0-e49c-42ad-a105-b76043ea425b',
-        name: 'Мой проект',
-        description: 'Описание моего проекта',
-        createdAt: '2024-01-15T10:30:00.000Z',
-        updatedAt: '2024-01-15T10:30:00.000Z',
-        isVerified: false,
-        isBlocked: false,
-      },
-    },
   })
   createProject(@Body() createProjectDto: CreateProjectDto) {
     return this.projectsService.createProject(createProjectDto);
@@ -114,11 +67,6 @@ export class ProjectsController {
     status: 200,
     description: 'Проект успешно удален',
     type: DeleteProjectResponseDto,
-    schema: {
-      example: {
-        message: 'Project deleted successfully',
-      },
-    },
   })
   @ApiResponse({ status: 404, description: 'Проект не найден' })
   async deleteProject(@Param('id') id: string) {

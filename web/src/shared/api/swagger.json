@@ -79,7 +79,7 @@
     },
     "/profile/profile": {
       "get": {
-        "operationId": "ProfileController_getProfile",
+        "operationId": "UserController_getProfile",
         "parameters": [],
         "responses": {
           "200": {
@@ -87,13 +87,13 @@
           }
         },
         "tags": [
-          "Profile"
+          "User"
         ]
       }
     },
     "/profile/{id}": {
       "put": {
-        "operationId": "ProfileController_updateProfile",
+        "operationId": "UserController_updateProfile",
         "parameters": [
           {
             "name": "id",
@@ -110,13 +110,13 @@
           }
         },
         "tags": [
-          "Profile"
+          "User"
         ]
       }
     },
     "/profile/update-password/{id}": {
       "put": {
-        "operationId": "ProfileController_updateUserPassword",
+        "operationId": "UserController_updateUserPassword",
         "parameters": [
           {
             "name": "id",
@@ -133,7 +133,7 @@
           }
         },
         "tags": [
-          "Profile"
+          "User"
         ]
       }
     },

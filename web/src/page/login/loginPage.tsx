@@ -1,6 +1,6 @@
 import LoginForm from "@/features/login/loginForm";
+import { api } from "@/processes/$api";
 import { useAuthContext } from "@/processes/authProvider/authProvider";
-import { api } from "@/shared/api/$api";
 import {
   Card,
   CardContent,

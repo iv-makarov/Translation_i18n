@@ -1,41 +1,19 @@
-import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
-
+import axios, {
+  AxiosError,
+  type AxiosRequestConfig,
+  type AxiosResponse,
+  type InternalAxiosRequestConfig,
+} from "axios";
 export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 // Создаем экземпляр axios с базовой конфигурацией
-export const api = axios.create({
+const instance = axios.create({
   baseURL: API_URL,
   withCredentials: true, // 👈 КРИТИЧЕСКИ ВАЖНО для отправки cookies
   headers: {
     "Content-Type": "application/json",
   },
 });
-
-// Типы для фильтров проектов
-export interface FilterProjectsDto {
-  page?: number;
-  limit?: number;
-  search?: string;
-  isVerified?: boolean;
-  isBlocked?: boolean;
-}
-
-// API для работы с проектами
-export const projectsApi = {
-  getProjects: (filters?: FilterProjectsDto) =>
-    api.get("/projects", { params: filters }).then((res) => res.data),
-
-  getProjectsByUser: (userId: string, filters?: FilterProjectsDto) =>
-    api
-      .get(`/projects/user/${userId}`, { params: filters })
-      .then((res) => res.data),
-
-  createProject: (data: { name: string; description?: string }) =>
-    api.post("/projects", data).then((res) => res.data),
-
-  deleteProject: (id: string) =>
-    api.delete(`/projects/${id}`).then((res) => res.data),
-};
 
 // Флаг для предотвращения бесконечного цикла refresh
 let isRefreshing = false;
@@ -46,14 +24,13 @@ const subscribeTokenRefresh = (cb: (token: string) => void) => {
   refreshSubscribers.push(cb);
 };
 
-// Функция для оповещения подписчиков
 const onTokenRefreshed = () => {
   refreshSubscribers.forEach((cb) => cb("refreshed"));
   refreshSubscribers = [];
 };
 
 // Response Interceptor - автоматическое обновление токена
-api.interceptors.response.use(
+instance.interceptors.response.use(
   // При успешном ответе просто возвращаем его
   (response) => response,
 
@@ -78,7 +55,7 @@ api.interceptors.response.use(
         // Подписываемся на обновление и ждем
         return new Promise((resolve) => {
           subscribeTokenRefresh(() => {
-            resolve(api(originalRequest));
+            resolve(instance.request(originalRequest));
           });
         });
       }
@@ -88,14 +65,14 @@ api.interceptors.response.use(
 
       try {
         // Пытаемся обновить токен
-        await api.post("/auth/refresh");
+        await instance.post("/auth/refresh");
 
         // Токен обновлен успешно
         isRefreshing = false;
         onTokenRefreshed();
 
         // Повторяем оригинальный запрос
-        return api(originalRequest);
+        return instance.request(originalRequest);
       } catch (refreshError) {
         // Refresh не удался - пользователь не авторизован
         isRefreshing = false;
@@ -110,3 +87,13 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+// Функция-мутатор для orval
+export const axiosInstance = async <T = unknown, D = unknown>(
+  config: AxiosRequestConfig<D>
+): Promise<AxiosResponse<T>> => {
+  return instance.request<T, AxiosResponse<T>, D>(config);
+};
+
+// Тип для ошибок
+export type ErrorType<Error> = AxiosError<Error>;

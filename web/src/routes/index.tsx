@@ -20,7 +20,7 @@ function RouteComponent() {
   // Редирект в зависимости от статуса авторизации
   if (isAuthenticated) {
     // Если авторизован - редирект на главную защищенную страницу
-    return <Navigate to="/projects" />;
+    return <Navigate to="/dashboard" />;
   } else {
     // Если не авторизован - редирект на страницу логина
     return <Navigate to="/login" />;

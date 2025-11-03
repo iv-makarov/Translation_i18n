@@ -1,11 +1,11 @@
 import RegisterForm from "@/features/register/registerForm";
-import { api } from "@/shared/api/$api";
+import { api } from "@/processes/$api";
 import {
   Card,
-  CardTitle,
-  CardHeader,
   CardContent,
   CardDescription,
+  CardHeader,
+  CardTitle,
 } from "@/shared/components/ui/card";
 import AuthWrapper from "@/widgets/wrappers/authWrapper";
 import { toast } from "sonner";

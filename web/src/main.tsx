@@ -2,22 +2,29 @@ import "@shared/styles/index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { routeTree } from "./routeTree.gen";
-import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 
-// Создаем QueryClient
+// Создаем QueryClient с настройками для API
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 5 * 60 * 1000, // 5 минут
       retry: 1,
+      refetchOnWindowFocus: false,
+    },
+    mutations: {
+      retry: 0,
     },
   },
 });
 
 export const router = createRouter({ routeTree });
+
+// Экспортируем queryClient для использования в API хуках
+export { queryClient };
 
 declare module "@tanstack/react-router" {
   interface Register {

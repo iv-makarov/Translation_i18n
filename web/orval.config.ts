@@ -1,30 +1,30 @@
 import { defineConfig } from "orval";
 
 export default defineConfig({
-  api: {
+  petstore: {
     input: {
-      // Путь к сгенерированному swagger.json
-      target: "./src/shared/api/generatedApi.json",
+      target: "./src/shared/api/swagger.json",
     },
     output: {
-      // Куда генерировать файлы - отдельная папка, чтобы не удалять generatedApi.json
-      target: "./src/shared/api/generated/index.ts",
-      // Используем axios instance
-      client: "axios",
-      // Настройки генерации
       mode: "tags-split",
-      // Импорт axios instance
+      client: "react-query",
+      httpClient: "axios",
+      target: "./src/shared/api/endpoints",
+      schemas: "src/shared/api/schemas.ts",
       override: {
         mutator: {
-          path: "../$api.ts",
-          name: "api",
+          path: "./src/shared/api/axiosInstance.ts",
+          name: "axiosInstance",
+        },
+        query: {
+          useQuery: true,
+          useInfinite: false,
+          useMutation: true,
+          signal: true,
         },
       },
-      clean: true, // Теперь безопасно - удаляет только папку generated/
-    },
-    hooks: {
-      // Генерируем React Query hooks
-      afterAllFilesWrite: "prettier --write",
+      mock: false,
+      clean: true,
     },
   },
 });
