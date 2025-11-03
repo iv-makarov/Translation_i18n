@@ -1,4 +1,3 @@
-import { useAuth } from "@/shared/hooks/useAuth";
 import { createContext, type ReactNode, useContext } from "react";
 
 interface User {
@@ -24,9 +23,8 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const auth = useAuth();
 
-  return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+  return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>;
 }
 
 export function useAuthContext() {

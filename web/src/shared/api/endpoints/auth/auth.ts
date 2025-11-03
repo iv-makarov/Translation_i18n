@@ -18,10 +18,10 @@ import type {
 import type {
   LoginDto,
   RegisterDto
-} from '../..';
+} from '../../schemas';
 
-import { axiosInstance } from '../../axiosInstance';
-import type { ErrorType } from '../../axiosInstance';
+import { axiosInstance } from '../../instance/axiosInstance';
+import type { ErrorType } from '../../instance/axiosInstance';
 
 
 

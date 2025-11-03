@@ -1,4 +1,5 @@
 import { useAuthContext } from "@/processes/authProvider/authProvider";
+import { Spinner } from "@/shared/components/ui/spinner";
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/")({
@@ -11,9 +12,7 @@ function RouteComponent() {
   // Показываем загрузку пока проверяем авторизацию
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Загрузка...</div>
-      </div>
+      <Spinner className="size-10 mx-auto" />
     );
   }
 

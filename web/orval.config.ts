@@ -10,10 +10,10 @@ export default defineConfig({
       client: "react-query",
       httpClient: "axios",
       target: "./src/shared/api/endpoints",
-      schemas: "src/shared/api/schemas.ts",
+      schemas: "./src/shared/api/schemas",
       override: {
         mutator: {
-          path: "./src/shared/api/axiosInstance.ts",
+          path: "./src/shared/api/instance/axiosInstance.ts",
           name: "axiosInstance",
         },
         query: {
@@ -24,7 +24,6 @@ export default defineConfig({
         },
       },
       mock: false,
-      clean: true,
     },
   },
 });

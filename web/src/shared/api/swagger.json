@@ -198,24 +198,6 @@
         "responses": {
           "200": {
             "description": "Список проектов успешно получен",
-            "schema": {
-              "example": {
-                "data": [
-                  {
-                    "id": "ca2b82f0-e49c-42ad-a105-b76043ea425b",
-                    "name": "Мой проект",
-                    "description": "Описание моего проекта",
-                    "createdAt": "2024-01-15T10:30:00.000Z",
-                    "updatedAt": "2024-01-15T10:30:00.000Z",
-                    "isVerified": false,
-                    "isBlocked": false
-                  }
-                ],
-                "total": 25,
-                "page": 1,
-                "limit": 10
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -245,17 +227,6 @@
         "responses": {
           "201": {
             "description": "Проект успешно создан",
-            "schema": {
-              "example": {
-                "id": "ca2b82f0-e49c-42ad-a105-b76043ea425b",
-                "name": "Мой проект",
-                "description": "Описание моего проекта",
-                "createdAt": "2024-01-15T10:30:00.000Z",
-                "updatedAt": "2024-01-15T10:30:00.000Z",
-                "isVerified": false,
-                "isBlocked": false
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -340,24 +311,6 @@
         "responses": {
           "200": {
             "description": "Список проектов пользователя успешно получен",
-            "schema": {
-              "example": {
-                "data": [
-                  {
-                    "id": "ca2b82f0-e49c-42ad-a105-b76043ea425b",
-                    "name": "Мой проект",
-                    "description": "Описание моего проекта",
-                    "createdAt": "2024-01-15T10:30:00.000Z",
-                    "updatedAt": "2024-01-15T10:30:00.000Z",
-                    "isVerified": false,
-                    "isBlocked": false
-                  }
-                ],
-                "total": 5,
-                "page": 1,
-                "limit": 10
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -389,11 +342,6 @@
         "responses": {
           "200": {
             "description": "Проект успешно удален",
-            "schema": {
-              "example": {
-                "message": "Project deleted successfully"
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
@@ -569,10 +517,7 @@
       "JWT-auth": {
         "scheme": "bearer",
         "bearerFormat": "JWT",
-        "type": "http",
-        "name": "JWT",
-        "description": "Enter JWT token",
-        "in": "header"
+        "type": "http"
       }
     },
     "schemas": {
