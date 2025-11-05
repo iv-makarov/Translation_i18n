@@ -47,7 +47,8 @@ export default function NavigateProfile() {
       : "User";
 
   // Email не приходит в ответе, используем ID или placeholder
-  const userEmail = profile?.id || "user@example.com";
+  const userEmail = profile?.email || "user@example.com";
+
   const handleLogout = async () => {
     await logout()
       .then(() => {
