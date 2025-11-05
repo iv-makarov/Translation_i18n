@@ -1,3 +1,5 @@
+import type { ProjectResponseDto } from "@/shared/api/schemas/projectResponseDto";
+import type { ProjectsListResponseDto } from "@/shared/api/schemas/projectsListResponseDto";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -6,7 +8,6 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/shared/components/ui/dropdown-menu";
-import { useDeleteProject, useProjects } from "@/shared/hooks/useProjects";
 import {
   Table,
   TableBody,
@@ -20,55 +21,28 @@ import {
   ChevronLeft,
   ChevronRight,
   Edit,
-  Loader2,
   MoreHorizontal,
   Trash2,
 } from "lucide-react";
 import { useState } from "react";
 
-export default function ProjectTable() {
+export default function ProjectTable({ projects }: { projects: ProjectsListResponseDto }) {
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,
   });
 
-  const { data: projectsData, isLoading, error } = useProjects(filters);
-  const deleteProjectMutation = useDeleteProject();
-
   const handleDeleteProject = async (projectId: string) => {
-    if (confirm("Вы уверены, что хотите удалить этот проект?")) {
-      try {
-        await deleteProjectMutation.mutateAsync(projectId);
-      } catch (error) {
-        console.error("Ошибка при удалении проекта:", error);
-      }
-    }
+    console.log("Delete", projectId);
+
   };
 
-  if (isLoading) {
-    return (
-      <div className="flex items-center justify-center p-8">
-        <Loader2 className="h-8 w-8 animate-spin" />
-        <span className="ml-2">Загрузка проектов...</span>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center p-8 text-red-500">
-        <span>Ошибка при загрузке проектов: {error.message}</span>
-      </div>
-    );
-  }
-
-  const projects = projectsData?.data || [];
   return (
     <div>
       {/* Информация о количестве проектов */}
-      {projectsData && (
+      {projects.total > 0 && (
         <div className="mb-4 text-sm text-muted-foreground">
-          Всего проектов: {projectsData.total}
+          Всего проектов: {projects.total}
         </div>
       )}
 
@@ -85,7 +59,7 @@ export default function ProjectTable() {
             </TableRow>
           </TableHeader>
           <TableBody className="overflow-x-auto">
-            {projects.length === 0 ? (
+            {projects.data?.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
@@ -95,7 +69,7 @@ export default function ProjectTable() {
                 </TableCell>
               </TableRow>
             ) : (
-              projects.map((project) => (
+              projects.data.map((project) => (
                 <TableRow
                   className="cursor-pointer"
                   key={project.id}
@@ -214,12 +188,12 @@ export default function ProjectTable() {
       </div>
 
       {/* Пагинация */}
-      {projectsData && projectsData.total > filters.limit && (
+      {projects.total > filters.limit && (
         <div className="flex items-center justify-between px-2 py-4">
           <div className="text-sm text-muted-foreground">
             Показано {(filters.page - 1) * filters.limit + 1} -{" "}
-            {Math.min(filters.page * filters.limit, projectsData.total)} из{" "}
-            {projectsData.total} проектов
+            {Math.min(filters.page * filters.limit, projects.total)} из{" "}
+            {projects.total} проектов
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -236,7 +210,7 @@ export default function ProjectTable() {
             <div className="flex items-center space-x-1">
               <span className="text-sm">
                 Страница {filters.page} из{" "}
-                {Math.ceil(projectsData.total / filters.limit)}
+                {Math.ceil(projects.total / filters.limit)}
               </span>
             </div>
             <Button
@@ -246,7 +220,7 @@ export default function ProjectTable() {
                 setFilters((prev) => ({ ...prev, page: prev.page + 1 }))
               }
               disabled={
-                filters.page >= Math.ceil(projectsData.total / filters.limit)
+                filters.page >= Math.ceil(projects.total / filters.limit)
               }
             >
               Следующая

@@ -10,14 +10,12 @@ import {
 } from "@/shared/components/ui/dialog";
 import { Input } from "@/shared/components/ui/input";
 import { Label } from "@/shared/components/ui/label";
-import { useCreateProject } from "@/shared/hooks/useProjects";
 import { Form, Formik } from "formik";
-import { Loader2, Plus, X } from "lucide-react";
+import { Plus, X } from "lucide-react";
 import { useState } from "react";
 
 const ProjectCreate = () => {
   const [open, setOpen] = useState(false);
-  const createProjectMutation = useCreateProject();
 
   const handleSubmit = async (values: {
     name: string;
@@ -25,17 +23,7 @@ const ProjectCreate = () => {
     whiteUrls: string[];
     nameSpaces: string[];
   }) => {
-    try {
-      await createProjectMutation.mutateAsync({
-        name: values.name,
-        description: values.description,
-        whiteUrls: values.whiteUrls.filter((url) => url.trim() !== ""),
-        nameSpaces: values.nameSpaces.filter((ns) => ns.trim() !== ""),
-      });
-      setOpen(false);
-    } catch (error) {
-      console.error("Ошибка при создании проекта:", error);
-    }
+    console.log(values);
   };
 
   return (
@@ -174,16 +162,9 @@ const ProjectCreate = () => {
               <DialogFooter>
                 <Button
                   type="submit"
-                  disabled={isSubmitting || createProjectMutation.isPending}
+                  disabled={isSubmitting}
                 >
-                  {createProjectMutation.isPending ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Создание...
-                    </>
-                  ) : (
-                    "Создать"
-                  )}
+                  Создать
                 </Button>
               </DialogFooter>
             </Form>

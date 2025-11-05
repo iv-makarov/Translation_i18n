@@ -1,7 +1,12 @@
 import ProjectCreate from "@/page/projectsPage/projectCreate";
 import ProjectTable from "@/page/projectsPage/projectTable";
+import type { ProjectResponseDto } from "@/shared/api/schemas/projectResponseDto";
 
-export default function ProjectsPage() {
+interface ProjectsPageProps {
+  projects: ProjectResponseDto[];
+}
+
+export default function ProjectsPage({ projects }: ProjectsPageProps) {
   return (
     <>
       <div className="flex flex-col gap-4 p-4">
@@ -13,7 +18,7 @@ export default function ProjectsPage() {
           <ProjectCreate />
         </div>
 
-        <ProjectTable />
+        <ProjectTable projects={projects} />
       </div>
     </>
   );
