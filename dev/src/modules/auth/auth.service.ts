@@ -31,10 +31,7 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async register(registerDto: RegisterDto): Promise<{
-    user: Omit<Users, 'passwordHash'>;
-    tokens: Tokens;
-  }> {
+  async register(registerDto: RegisterDto): Promise<void> {
     // check if user already exists
     const existingUser = await this.em.findOne(Users, {
       email: registerDto.email,
@@ -77,29 +74,6 @@ export class AuthService {
       createOrganization.userIds = [user.id];
     }
     await this.em.persistAndFlush(createOrganization);
-
-    // Генерируем токены используя общий метод
-    const tokens = await this.generateTokens(user.id, user.email, user.role);
-
-    // create session
-    const session = this.em.create(Session, {
-      accessToken: tokens.accessToken,
-      refreshToken: tokens.refreshToken,
-      user: user.id,
-      expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-      revoked: false,
-      createdAt: new Date(),
-    });
-
-    await this.em.persistAndFlush(session);
-
-    // return user and access token
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { passwordHash, ...userWithoutPassword } = user;
-    return {
-      user: userWithoutPassword,
-      tokens,
-    };
   }
 
   async login(loginDto: LoginDto): Promise<{

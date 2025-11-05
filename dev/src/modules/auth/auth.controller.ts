@@ -80,14 +80,8 @@ export class AuthController {
       },
     },
   })
-  async register(
-    @Body() registerDto: RegisterDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const { tokens } = await this.authService.register(registerDto);
-
-    // Set cookies
-    this.setCookies(res, tokens);
+  async register(@Body() registerDto: RegisterDto) {
+    await this.authService.register(registerDto);
 
     return {
       statusCode: HttpStatus.OK,
