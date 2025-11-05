@@ -187,12 +187,20 @@ export class AuthService {
       // Генерируем новые токены
       const tokens = await this.generateTokens(user.id, user.email, user.role);
 
-      // Обновляем сессию с новыми токенами
-      session.accessToken = tokens.accessToken;
-      session.refreshToken = tokens.refreshToken;
-      session.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
+      // Delete old session (since accessToken is Primary Key, we can't update it)
+      await this.em.removeAndFlush(session);
 
-      await this.em.persistAndFlush(session);
+      // Create new session with new tokens
+      const newSession = this.em.create(Session, {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        user: user.id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
+        revoked: false,
+        createdAt: new Date(),
+      });
+
+      await this.em.persistAndFlush(newSession);
 
       return tokens;
     } catch (error) {
@@ -208,7 +216,7 @@ export class AuthService {
     refreshToken: string | undefined,
   ): Promise<void> {
     try {
-      // Ищем сессию по accessToken или refreshToken
+      // Find session by accessToken or refreshToken
       const session = await this.em.findOne(Session, {
         $or: [
           accessToken ? { accessToken } : {},
@@ -217,9 +225,8 @@ export class AuthService {
       });
 
       if (session) {
-        // Отзываем сессию
-        session.revoked = true;
-        await this.em.persistAndFlush(session);
+        // Delete session from database
+        await this.em.removeAndFlush(session);
       }
     } catch (error) {
       console.error(error);
