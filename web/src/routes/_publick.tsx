@@ -6,20 +6,25 @@ export const Route = createFileRoute("/_publick")({
 });
 
 function RouteComponent() {
-  const { isAuthenticated, isLoading } = useAuthContext();
+  const { isAuth, isLoading } = useAuthContext();
 
-  // Показываем загрузку пока проверяем авторизацию
+  // Пока проверяется аутентификация - показываем загрузку
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-lg">Загрузка...</div>
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto"></div>
+          <p className="mt-4 text-sm text-muted-foreground">
+            Проверка аутентификации...
+          </p>
+        </div>
       </div>
     );
   }
 
   // Если уже авторизован - редирект на защищенные страницы (например, projects)
-  if (isAuthenticated) {
-    return <Navigate to="/projects" />;
+  if (isAuth) {
+    return <Navigate to="/dashboard" />;
   }
 
   // Если не авторизован - показываем публичные страницы

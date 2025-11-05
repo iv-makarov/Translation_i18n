@@ -4,6 +4,8 @@ import axios, {
   type AxiosResponse,
   type InternalAxiosRequestConfig,
 } from "axios";
+import { updateAuthState } from "@/processes/authProvider/authProvider";
+
 export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 // Создаем экземпляр axios с базовой конфигурацией
@@ -77,6 +79,10 @@ instance.interceptors.response.use(
         // Refresh не удался - пользователь не авторизован
         isRefreshing = false;
         refreshSubscribers = [];
+
+        // Обновляем состояние аутентификации
+        updateAuthState(false);
+
         return Promise.reject(refreshError);
       }
     }

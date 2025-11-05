@@ -1,4 +1,7 @@
 import { useAuthContext } from "@/processes/authProvider/authProvider";
+import { useAuthControllerLogout } from "@/shared/api/endpoints/auth/auth";
+import { useUserControllerGetProfile } from "@/shared/api/endpoints/user/user";
+import type { UserResponseDto } from "@/shared/api/schemas/userResponseDto";
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
 import {
   DropdownMenu,
@@ -15,25 +18,47 @@ import {
   SidebarMenuItem,
 } from "@/shared/components/ui/sidebar";
 import { useNavigate } from "@tanstack/react-router";
+import type { AxiosError, AxiosResponse } from "axios";
 import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
+import { toast } from "sonner";
 
 export default function NavigateProfile() {
-  const { user, logout } = useAuthContext();
+  const { setAuth } = useAuthContext();
+  const { mutateAsync: logout } = useAuthControllerLogout();
   const navigate = useNavigate();
-  const isMobile = false;
 
+  // Получаем данные профиля из query (загружены в loader)
+  const { data: profileResponse } =
+    useUserControllerGetProfile<AxiosResponse<UserResponseDto>>();
+
+  // Извлекаем данные пользователя из ответа
+  const profile = profileResponse?.data;
+
+  // Формируем инициалы пользователя
+  const userInitials =
+    profile?.firstName && profile?.lastName
+      ? `${profile.firstName[0]}${profile.lastName[0]}`.toUpperCase()
+      : "U";
+
+  // Формируем имя пользователя
+  const userName =
+    profile?.firstName && profile?.lastName
+      ? `${profile.firstName} ${profile.lastName}`
+      : "User";
+
+  // Email не приходит в ответе, используем ID или placeholder
+  const userEmail = profile?.id || "user@example.com";
   const handleLogout = async () => {
-    await logout();
-    navigate({ to: "/login" });
+    await logout()
+      .then(() => {
+        setAuth(false);
+        toast.success("Successfully logged out");
+        navigate({ to: "/login" });
+      })
+      .catch((error: AxiosError) => {
+        toast.error(error.message as string);
+      });
   };
-
-  // Формируем инициалы для аватара
-  const userInitials = user
-    ? `${user.firstName.charAt(0)}${user.lastName.charAt(0)}`.toUpperCase()
-    : "??";
-
-  const userName = user ? `${user.firstName} ${user.lastName}` : "Загрузка...";
-  const userEmail = user?.email || "";
 
   return (
     <SidebarMenu>
@@ -58,7 +83,7 @@ export default function NavigateProfile() {
           </DropdownMenuTrigger>
           <DropdownMenuContent
             className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-            side={isMobile ? "bottom" : "right"}
+            side="right"
             align="end"
             sideOffset={4}
           >

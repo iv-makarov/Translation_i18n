@@ -1,4 +1,6 @@
+import { updateAuthState } from "@/processes/authProvider/authProvider";
 import axios, { AxiosError, type InternalAxiosRequestConfig } from "axios";
+
 export const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
 // Создаем экземпляр axios с базовой конфигурацией
@@ -72,6 +74,9 @@ $api.interceptors.response.use(
         // Refresh не удался - пользователь не авторизован
         isRefreshing = false;
         refreshSubscribers = [];
+
+        // Обновляем состояние аутентификации
+        updateAuthState(false);
 
         // Просто отклоняем ошибку - роутинг сам разберется через _protected/_publick
         // НЕ используем window.location.href - это вызывает перезагрузку и бесконечный цикл
