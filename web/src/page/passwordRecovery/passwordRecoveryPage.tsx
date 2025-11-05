@@ -1,10 +1,10 @@
 import PasswordRecoveryForm from "@/features/passwordRecovery/passwordRecoveryForm";
-import AuthWrapper from "@/widgets/wrappers/authWrapper";
+import PublickWrapper from "@/widgets/wrappers/publicWrapper";
 
 export default function PasswordRecoveryPage() {
   return (
-    <AuthWrapper>
+    <PublickWrapper>
       <PasswordRecoveryForm />
-    </AuthWrapper>
+    </PublickWrapper>
   );
 }

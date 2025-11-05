@@ -1,21 +1,20 @@
 import Header from "@/features/header/header";
 import Navigate from "@/features/sidebarNavigate/navigate";
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/shared/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/shared/components/ui/sidebar";
 
-interface AuthorizedUsersWrapperProps {
+interface ProtectedWrapperProps {
   children: React.ReactNode;
 }
 
-export default function AuthorizedUsersWrapper({ children }: AuthorizedUsersWrapperProps) {
+export default function ProtectedWrapper({
+  children,
+}: ProtectedWrapperProps) {
   return (
     <SidebarProvider>
       <Navigate />
       <SidebarInset>
         <Header />
-        {children}
+        <div className="p-4">{children}</div>
       </SidebarInset>
     </SidebarProvider>
   );

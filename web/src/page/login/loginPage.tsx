@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import AuthWrapper from "@/widgets/wrappers/authWrapper";
+import PublickWrapper from "@/widgets/wrappers/publicWrapper";
 import { useNavigate } from "@tanstack/react-router";
 import type { AxiosError } from "axios";
 import { toast } from "sonner";
@@ -19,7 +19,7 @@ export default function LoginPage() {
   const { setAuth } = useAuthContext();
 
   return (
-    <AuthWrapper>
+    <PublickWrapper>
       <div className="flex flex-col gap-6">
         <Card>
           <CardHeader className="text-center">
@@ -43,6 +43,6 @@ export default function LoginPage() {
           </CardContent>
         </Card>
       </div>
-    </AuthWrapper>
+    </PublickWrapper>
   );
 }

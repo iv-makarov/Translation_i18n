@@ -1,6 +1,6 @@
 import { useAuthContext } from "@/processes/authProvider/authProvider";
 import { getUserControllerGetProfileQueryOptions } from "@/shared/api/endpoints/user/user";
-import AuthorizedUsersWrapper from "@/widgets/wrappers/authorizedUsersWrapper";
+import ProtectedWrapper from "@/widgets/wrappers/protectedWrapper";
 import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_protected")({
@@ -36,8 +36,8 @@ function RouteComponent() {
 
   // Если авторизован - показываем защищенный контент с layout
   return (
-    <AuthorizedUsersWrapper>
+    <ProtectedWrapper>
       <Outlet />
-    </AuthorizedUsersWrapper>
+    </ProtectedWrapper>
   );
 }

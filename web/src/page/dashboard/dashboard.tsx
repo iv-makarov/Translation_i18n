@@ -1,5 +1,11 @@
+import Charts from "@/widgets/charts/charts";
+
 const Dashboard = () => {
-  return <div>Dashboard</div>;
+  return (
+    <div>
+      <Charts />
+    </div>
+  );
 };
 
 export default Dashboard;

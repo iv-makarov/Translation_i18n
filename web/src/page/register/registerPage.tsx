@@ -7,12 +7,12 @@ import {
   CardHeader,
   CardTitle,
 } from "@/shared/components/ui/card";
-import AuthWrapper from "@/widgets/wrappers/authWrapper";
+import PublickWrapper from "@/widgets/wrappers/publicWrapper";
 import { toast } from "sonner";
 
 export default function RegisterPage() {
   return (
-    <AuthWrapper>
+    <PublickWrapper>
       <div className="flex flex-col gap-6">
         <Card>
           <CardHeader className="text-center">
@@ -36,6 +36,6 @@ export default function RegisterPage() {
           </CardContent>
         </Card>
       </div>
-    </AuthWrapper>
+    </PublickWrapper>
   );
 }
