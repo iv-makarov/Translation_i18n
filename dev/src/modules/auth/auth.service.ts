@@ -221,9 +221,8 @@ export class AuthService {
         session.revoked = true;
         await this.em.persistAndFlush(session);
       }
-    } catch {
-      // Игнорируем ошибки при logout
-      // Даже если произошла ошибка, мы все равно очистим cookies на клиенте
+    } catch (error) {
+      console.error(error);
     }
   }
 

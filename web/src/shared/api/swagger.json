@@ -3,10 +3,12 @@
   "paths": {
     "/auth/register": {
       "post": {
+        "description": "Creates a new user and organization. Sets JWT tokens in cookies.",
         "operationId": "AuthController_register",
         "parameters": [],
         "requestBody": {
           "required": true,
+          "description": "User registration data",
           "content": {
             "application/json": {
               "schema": {
@@ -17,20 +19,67 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RegisterResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "schema": {
+              "example": {
+                "statusCode": 400,
+                "message": [
+                  "email must be an email",
+                  "password must be longer than or equal to 6 characters"
+                ],
+                "error": "Bad Request"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "schema": {
+              "example": {
+                "statusCode": 409,
+                "message": "User with this email already exists",
+                "error": "Conflict"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
+        "summary": "Register new user",
         "tags": [
-          "Auth"
+          "Authentication"
         ]
       }
     },
     "/auth/login": {
       "post": {
+        "description": "Authenticates user by email and password. Sets JWT tokens in cookies.",
         "operationId": "AuthController_login",
         "parameters": [],
         "requestBody": {
           "required": true,
+          "description": "User login credentials",
           "content": {
             "application/json": {
               "schema": {
@@ -41,39 +90,199 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "Successfully logged in",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LoginResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "schema": {
+              "example": {
+                "statusCode": 400,
+                "message": [
+                  "email must be an email",
+                  "password must be longer than or equal to 6 characters"
+                ],
+                "error": "Bad Request"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials or user is inactive",
+            "schema": {
+              "examples": {
+                "userNotFound": {
+                  "summary": "User not found",
+                  "value": {
+                    "statusCode": 401,
+                    "message": "User not found",
+                    "error": "Unauthorized"
+                  }
+                },
+                "incorrectPassword": {
+                  "summary": "Incorrect password",
+                  "value": {
+                    "statusCode": 401,
+                    "message": "Password is incorrect",
+                    "error": "Unauthorized"
+                  }
+                },
+                "userDeactivated": {
+                  "summary": "Account deactivated",
+                  "value": {
+                    "statusCode": 401,
+                    "message": "User account is deactivated",
+                    "error": "Unauthorized"
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
+        "summary": "User login",
         "tags": [
-          "Auth"
+          "Authentication"
         ]
       }
     },
     "/auth/refresh": {
       "post": {
+        "description": "Refreshes access token using refresh token from cookies. Sets new tokens in cookies.",
         "operationId": "AuthController_refreshToken",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Token successfully refreshed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RefreshTokenResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Refresh token missing, invalid or session expired",
+            "schema": {
+              "examples": {
+                "tokenNotFound": {
+                  "summary": "Refresh token not found",
+                  "value": {
+                    "statusCode": 401,
+                    "message": "Refresh token not found",
+                    "error": "Unauthorized"
+                  }
+                },
+                "sessionNotFound": {
+                  "summary": "Session not found or revoked",
+                  "value": {
+                    "statusCode": 401,
+                    "message": "Session not found or revoked",
+                    "error": "Unauthorized"
+                  }
+                },
+                "sessionExpired": {
+                  "summary": "Session expired",
+                  "value": {
+                    "statusCode": 401,
+                    "message": "Session expired",
+                    "error": "Unauthorized"
+                  }
+                },
+                "invalidToken": {
+                  "summary": "Invalid refresh token",
+                  "value": {
+                    "statusCode": 401,
+                    "message": "Invalid refresh token",
+                    "error": "Unauthorized"
+                  }
+                },
+                "userInactive": {
+                  "summary": "User inactive",
+                  "value": {
+                    "statusCode": 401,
+                    "message": "User not found or inactive",
+                    "error": "Unauthorized"
+                  }
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
+        "summary": "Refresh access token",
         "tags": [
-          "Auth"
+          "Authentication"
         ]
       }
     },
     "/auth/logout": {
       "post": {
+        "description": "Logs out user, revokes session and clears token cookies. Requires authentication.",
         "operationId": "AuthController_logout",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Successfully logged out",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/LogoutResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "User not authenticated",
+            "schema": {
+              "example": {
+                "statusCode": 401,
+                "message": "Unauthorized",
+                "error": "Unauthorized"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
+        "security": [
+          {
+            "cookie": []
+          }
+        ],
+        "summary": "User logout",
         "tags": [
-          "Auth"
+          "Authentication"
         ]
       }
     },
@@ -527,27 +736,37 @@
           "organizationName": {
             "type": "string",
             "description": "Organization name",
-            "example": "Organization"
+            "example": "My Organization",
+            "minLength": 1,
+            "maxLength": 100
           },
           "lastName": {
             "type": "string",
-            "description": "Last name of the user",
-            "example": "Doe"
+            "description": "User last name",
+            "example": "Doe",
+            "minLength": 2,
+            "maxLength": 20
           },
           "firstName": {
             "type": "string",
-            "description": "First name of the user",
-            "example": "John"
+            "description": "User first name",
+            "example": "John",
+            "minLength": 2,
+            "maxLength": 20
           },
           "email": {
             "type": "string",
-            "description": "Email of the user",
-            "example": "john.doe@example.com"
+            "description": "User email address",
+            "example": "john.doe@example.com",
+            "format": "email"
           },
           "password": {
             "type": "string",
-            "description": "Password of the user",
-            "example": "password"
+            "description": "User password (6 to 20 characters)",
+            "example": "password123",
+            "minLength": 6,
+            "maxLength": 20,
+            "format": "password"
           }
         },
         "required": [
@@ -558,23 +777,115 @@
           "password"
         ]
       },
+      "RegisterResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "description": "Success registration message",
+            "example": "User registered successfully"
+          }
+        },
+        "required": [
+          "statusCode",
+          "message"
+        ]
+      },
+      "ErrorResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code",
+            "example": 400
+          },
+          "message": {
+            "type": "object",
+            "description": "Error message",
+            "example": "Validation failed"
+          },
+          "error": {
+            "type": "string",
+            "description": "Error name",
+            "example": "Bad Request"
+          }
+        },
+        "required": [
+          "statusCode",
+          "message"
+        ]
+      },
       "LoginDto": {
         "type": "object",
         "properties": {
           "email": {
             "type": "string",
-            "description": "Email",
-            "example": "john@example.com"
+            "description": "User email address",
+            "example": "john@example.com",
+            "format": "email"
           },
           "password": {
             "type": "string",
-            "description": "Password",
-            "example": "password123"
+            "description": "User password (6 to 20 characters)",
+            "example": "password123",
+            "minLength": 6,
+            "maxLength": 20,
+            "format": "password"
           }
         },
         "required": [
           "email",
           "password"
+        ]
+      },
+      "LoginResponseDto": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "description": "Success login message",
+            "example": "User logged in successfully"
+          }
+        },
+        "required": [
+          "statusCode",
+          "message"
+        ]
+      },
+      "RefreshTokenResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Success token refresh message",
+            "example": "Token refreshed successfully"
+          }
+        },
+        "required": [
+          "message"
+        ]
+      },
+      "LogoutResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Success logout message",
+            "example": "Logout successful"
+          }
+        },
+        "required": [
+          "message"
         ]
       },
       "UserResponseDto": {
