@@ -1,19 +1,15 @@
-import { createContext, type ReactNode, useContext } from "react";
-
-interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-}
+import {
+  createContext,
+  type ReactNode,
+  useCallback,
+  useContext,
+  useMemo,
+} from "react";
 
 interface AuthContextType {
-  user: User | null;
-  isLoading: boolean;
-  isAuthenticated: boolean;
-  error: Error | null;
-  checkAuth: () => Promise<void>;
-  logout: () => Promise<void>;
+  isAuth: boolean;
+  checkAuth: () => boolean;
+  setAuth: (value: boolean) => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -23,8 +19,25 @@ interface AuthProviderProps {
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
+  const isAuth = useMemo(() => {
+    return localStorage.getItem("isAuthenticated") === "true";
+  }, []);
 
-  return <AuthContext.Provider value={{}}>{children}</AuthContext.Provider>;
+  const checkAuth = useCallback(() => {
+    return localStorage.getItem("isAuthenticated") === "true";
+  }, []);
+
+  const setAuth = useCallback((value: boolean) => {
+    localStorage.setItem("isAuthenticated", value.toString());
+  }, []);
+
+  return (
+    <AuthContext.Provider
+      value={{ isAuth, checkAuth, setAuth }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuthContext() {

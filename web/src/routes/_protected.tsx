@@ -7,10 +7,10 @@ export const Route = createFileRoute("/_protected")({
 });
 
 function RouteComponent() {
-  const { isAuthenticated, isLoading } = useAuthContext();
+  const { isAuth, checkAuth } = useAuthContext();
 
   // Показываем загрузку пока проверяем авторизацию
-  if (isLoading) {
+  if (!checkAuth()) {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-lg">Загрузка...</div>
@@ -19,7 +19,7 @@ function RouteComponent() {
   }
 
   // Если не авторизован - редирект на страницу логина
-  if (!isAuthenticated) {
+  if (!isAuth) {
     return <Navigate to="/login" />;
   }
 

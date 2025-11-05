@@ -10,12 +10,13 @@ import {
 } from "@/shared/components/ui/card";
 import AuthWrapper from "@/widgets/wrappers/authWrapper";
 import { useNavigate } from "@tanstack/react-router";
+import type { AxiosError } from "axios";
 import { toast } from "sonner";
 
 export default function LoginPage() {
-  const { checkAuth } = useAuthContext();
-  const { mutate: login } = useAuthControllerLogin();
+  const { mutateAsync: login } = useAuthControllerLogin();
   const navigate = useNavigate();
+  const { setAuth } = useAuthContext();
 
   return (
     <AuthWrapper>
@@ -28,17 +29,15 @@ export default function LoginPage() {
           <CardContent>
             <LoginForm
               onSubmit={async (values) => {
-                try {
-                  await login({ data: values });
-                  // После успешного логина проверяем авторизацию
-                  await checkAuth();
-                  // Редирект произойдет автоматически через _publick.tsx
-                  toast.success("Вы успешно вошли в систему");
-                  navigate({ to: "/projects" });
-                } catch (error) {
-                  console.error("Login error:", error);
-                  toast.error("Ошибка входа. Проверьте email и пароль.");
-                }
+                await login({ data: values })
+                  .then(() => {
+                    toast.success("Successfully logged in");
+                    setAuth(true);
+                    navigate({ to: "/dashboard" });
+                  })
+                  .catch((error: AxiosError) => {
+                    toast.error(error.message as string);
+                  });
               }}
             />
           </CardContent>
