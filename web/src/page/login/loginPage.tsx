@@ -1,6 +1,6 @@
 import LoginForm from "@/features/login/loginForm";
-import { api } from "@/processes/$api";
 import { useAuthContext } from "@/processes/authProvider/authProvider";
+import { useAuthControllerLogin } from "@/shared/api/endpoints/auth/auth";
 import {
   Card,
   CardContent,
@@ -14,6 +14,7 @@ import { toast } from "sonner";
 
 export default function LoginPage() {
   const { checkAuth } = useAuthContext();
+  const { mutate: login } = useAuthControllerLogin();
   const navigate = useNavigate();
 
   return (
@@ -28,7 +29,7 @@ export default function LoginPage() {
             <LoginForm
               onSubmit={async (values) => {
                 try {
-                  await api.post("/auth/login", values);
+                  await login({ data: values });
                   // После успешного логина проверяем авторизацию
                   await checkAuth();
                   // Редирект произойдет автоматически через _publick.tsx
