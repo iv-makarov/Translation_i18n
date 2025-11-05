@@ -1,5 +1,4 @@
 import {
-  Cascade,
   Entity,
   ManyToOne,
   PrimaryKey,
@@ -18,7 +17,7 @@ export class Session {
   refreshToken: string;
 
   // User ID
-  @ManyToOne(() => Users, { nullable: false, cascade: [Cascade.REMOVE] })
+  @ManyToOne(() => Users, { nullable: false })
   user: Users;
 
   // Device
