@@ -3,83 +3,56 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
-  Param,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBody, ApiParam, ApiResponse } from '@nestjs/swagger';
-import { Public } from 'src/modules/auth/decorators/public.decorator';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
-import {
-  CreateProjectResponseDto,
-  DeleteProjectResponseDto,
-  FilterProjectsDto,
-} from 'src/modules/projects/dto/filterProjects.dto';
+import { DeleteProjectDto } from 'src/modules/projects/dto/deleteProject.dto';
 import { CreateProjectDto } from './dto/createProjects.dto';
-import { ProjectsListResponseDto } from './dto/project.dto';
 import { ProjectsService } from './projects.service';
+import { GetProjectsDto } from 'src/modules/projects/dto/getProjects.dto';
+import {
+  DeleteProjectResponseDto,
+  GetProjectByIdResponseDto,
+  GetProjectsResponseDto,
+} from 'src/modules/projects/dto/response.dto';
+import { GetProjectByIdDto } from 'src/modules/projects/dto/getProjectById.dto';
 
-@Controller('projects')
+@Controller()
 @UseGuards(JwtAuthGuard)
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
-  @Get()
-  @Public()
-  @ApiResponse({
-    status: 200,
-    description: 'Projects list successfully received',
-    type: ProjectsListResponseDto,
-  })
-  getProjects(@Query() filterProjectsDto: FilterProjectsDto) {
-    return this.projectsService.getProjects(filterProjectsDto);
+  @Get('getProjects')
+  async getProjects(
+    @Query() getProjectsDto: GetProjectsDto,
+  ): Promise<GetProjectsResponseDto> {
+    return (await this.projectsService.getProjects(
+      getProjectsDto,
+    )) as unknown as GetProjectsResponseDto;
   }
 
-  @Get('user/:userId')
-  @ApiParam({ name: 'userId', type: String, description: 'User ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'User projects list successfully received',
-    type: ProjectsListResponseDto,
-  })
-  getProjectsByUser(@Query() filterProjectsDto: FilterProjectsDto) {
-    return this.projectsService.getProjects(filterProjectsDto);
+  @Get('getProject/:id')
+  async getProjectById(
+    @Body() getProjectByIdDto: GetProjectByIdDto,
+  ): Promise<GetProjectByIdResponseDto> {
+    return (await this.projectsService.getProjectById(
+      getProjectByIdDto.id,
+    )) as unknown as GetProjectByIdResponseDto;
   }
 
-  @Post()
-  @Public()
-  @ApiBody({ type: CreateProjectDto })
-  @ApiResponse({
-    status: 201,
-    description: 'Project successfully created',
-    type: CreateProjectResponseDto,
-  })
+  @Post('createProject')
   createProject(@Body() createProjectDto: CreateProjectDto) {
     return this.projectsService.createProject(createProjectDto);
   }
 
-  @Delete(':id')
-  @ApiParam({ name: 'id', type: String, description: 'Project ID' })
-  @ApiResponse({
-    status: 200,
-    description: 'Project successfully deleted',
-    type: DeleteProjectResponseDto,
-  })
-  @ApiResponse({ status: 404, description: 'Project not found' })
-  async deleteProject(@Param('id') id: string) {
-    try {
-      return await this.projectsService.deleteProject(id);
-    } catch (error: unknown) {
-      if (error instanceof Error && error.message.includes('not found')) {
-        throw new HttpException('Project not found', HttpStatus.NOT_FOUND);
-      }
-      throw new HttpException(
-        'Internal server error',
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
-    }
+  @Delete('deleteProject/:id')
+  async deleteProject(
+    @Body() deleteProjectDto: DeleteProjectDto,
+  ): Promise<DeleteProjectResponseDto> {
+    return (await this.projectsService.deleteProject(
+      deleteProjectDto.id,
+    )) as unknown as DeleteProjectResponseDto;
   }
 }

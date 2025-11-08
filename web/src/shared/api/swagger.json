@@ -348,7 +348,7 @@
         ]
       }
     },
-    "/user/getUsers": {
+    "/getUsers": {
       "get": {
         "operationId": "UserController_getUsers",
         "parameters": [],
@@ -362,7 +362,7 @@
         ]
       }
     },
-    "/user/createUser": {
+    "/createUser": {
       "post": {
         "operationId": "UserController_createUser",
         "parameters": [],
@@ -386,7 +386,7 @@
         ]
       }
     },
-    "/user/updateUser/{id}": {
+    "/updateUser/{id}": {
       "put": {
         "operationId": "UserController_updateUser",
         "parameters": [
@@ -419,7 +419,7 @@
         ]
       }
     },
-    "/user/deleteUser/{id}": {
+    "/deleteUser/{id}": {
       "delete": {
         "operationId": "UserController_deleteUser",
         "parameters": [

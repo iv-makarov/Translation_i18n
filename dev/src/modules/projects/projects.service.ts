@@ -3,16 +3,16 @@ import { BadRequestException, Injectable } from '@nestjs/common';
 import { NameSpace } from 'db/entitis/NameSpace';
 import { Projects } from 'db/entitis/Projects';
 import { WhiteUrl } from 'db/entitis/WhiteUrl';
-import { FilterProjectsDto } from 'src/modules/projects/dto/filterProjects.dto';
 import { CreateProjectDto } from './dto/createProjects.dto';
+import { GetProjectsDto } from 'src/modules/projects/dto/getProjects.dto';
 
 @Injectable()
 export class ProjectsService {
   constructor(private readonly em: EntityManager) {}
 
-  async getProjects(filterProjectsDto: FilterProjectsDto) {
-    const page = filterProjectsDto.page ?? 1;
-    const limit = filterProjectsDto.limit ?? 10;
+  async getProjects(getProjectsDto: GetProjectsDto) {
+    const page = getProjectsDto.page;
+    const limit = getProjectsDto.limit;
 
     const [data, total] = await this.em.findAndCount(
       Projects,
@@ -33,6 +33,14 @@ export class ProjectsService {
       page,
       limit,
     };
+  }
+
+  async getProjectById(id: string) {
+    const project = await this.em.findOne(Projects, { id });
+    if (!project) {
+      throw new BadRequestException(`Project with id ${id} not found`);
+    }
+    return project;
   }
 
   async createProject(createProjectDto: CreateProjectDto) {

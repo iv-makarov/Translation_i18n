@@ -1,41 +1,59 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsOptional, IsString, IsUrl } from 'class-validator';
+import {
+  IsArray,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+  IsUrl,
+  Length,
+} from 'class-validator';
 
 export class CreateProjectDto {
   @ApiProperty({
-    description: 'Название проекта',
-    example: 'Мой проект',
+    description: 'Project name',
+    example: 'My project',
   })
-  @IsString()
+  @IsString({ message: 'Project name must be a string' })
+  @IsNotEmpty({ message: 'Project name is required' })
+  @Length(2, 100, {
+    message: 'Project name must be between 2 and 100 characters',
+  })
   name: string;
 
   @ApiProperty({
-    description: 'Описание проекта',
-    example: 'Описание моего проекта',
+    description: 'Project description',
+    example: 'Description of my project',
   })
-  @IsString()
+  @IsString({ message: 'Project description must be a string' })
+  @IsNotEmpty({ message: 'Project description is required' })
+  @Length(2, 1000, {
+    message: 'Project description must be between 2 and 1000 characters',
+  })
   description: string;
 
   @ApiProperty({
-    description: 'Белый список URL для проекта',
+    description: 'White list of URLs for the project',
     example: ['https://example.com', 'https://test.com'],
     required: false,
     type: [String],
   })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
-  @IsUrl({}, { each: true, message: 'Каждый URL должен быть валидным' })
+  @IsOptional({ message: 'White URLs are optional' })
+  @IsArray({ message: 'White URLs must be an array' })
+  @IsString({ each: true, message: 'Each white URL must be a string' })
+  @IsUrl({}, { each: true, message: 'Each URL must be valid' })
   whiteUrls?: string[];
 
   @ApiProperty({
-    description: 'Пространства имен для проекта',
+    description: 'Namespaces for the project',
     example: ['my-project-namespace', 'another-namespace'],
     required: false,
     type: [String],
   })
-  @IsOptional()
-  @IsArray()
-  @IsString({ each: true })
+  @IsOptional({ message: 'Namespaces are optional' })
+  @IsArray({ message: 'Namespaces must be an array' })
+  @IsString({ each: true, message: 'Each namespace must be a string' })
+  @Length(2, 100, {
+    message: 'Each namespace must be between 2 and 100 characters',
+  })
   nameSpaces?: string[];
 }
