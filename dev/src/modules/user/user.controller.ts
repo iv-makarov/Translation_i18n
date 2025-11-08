@@ -18,7 +18,7 @@ import {
 } from 'src/modules/user/dto/response.dto';
 import { CreateUserDto } from 'src/modules/user/dto/createUser.dto';
 import { UpdateUserDto } from 'src/modules/user/dto/updateUser.dto';
-@Controller('user')
+@Controller()
 @UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
