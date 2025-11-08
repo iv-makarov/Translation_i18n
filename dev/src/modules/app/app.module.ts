@@ -8,6 +8,7 @@ import { AuthModule } from '../auth/auth.module';
 import { ProjectsModule } from '../projects/projects.module';
 import { TranslationsModule } from '../translations/translations.module';
 import { UserModule } from '../user/user.module';
+import { ProfileModule } from '../profile/profile.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { UserModule } from '../user/user.module';
       ensureDatabase: true,
     }),
     AuthModule,
+    ProfileModule,
     UserModule,
     ProjectsModule,
     TranslationsModule,

@@ -32,7 +32,7 @@ import { Public } from './decorators/public.decorator';
 import type { RequestWithCookies } from './interfaces/request-with-cookies.interface';
 
 @ApiTags('Authentication')
-@Controller('auth')
+@Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 

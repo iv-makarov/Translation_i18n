@@ -31,7 +31,7 @@ export class ProjectsController {
   @Public()
   @ApiResponse({
     status: 200,
-    description: 'Список проектов успешно получен',
+    description: 'Projects list successfully received',
     type: ProjectsListResponseDto,
   })
   getProjects(@Query() filterProjectsDto: FilterProjectsDto) {
@@ -39,10 +39,10 @@ export class ProjectsController {
   }
 
   @Get('user/:userId')
-  @ApiParam({ name: 'userId', type: String, description: 'ID пользователя' })
+  @ApiParam({ name: 'userId', type: String, description: 'User ID' })
   @ApiResponse({
     status: 200,
-    description: 'Список проектов пользователя успешно получен',
+    description: 'User projects list successfully received',
     type: ProjectsListResponseDto,
   })
   getProjectsByUser(@Query() filterProjectsDto: FilterProjectsDto) {
@@ -54,7 +54,7 @@ export class ProjectsController {
   @ApiBody({ type: CreateProjectDto })
   @ApiResponse({
     status: 201,
-    description: 'Проект успешно создан',
+    description: 'Project successfully created',
     type: CreateProjectResponseDto,
   })
   createProject(@Body() createProjectDto: CreateProjectDto) {
@@ -62,13 +62,13 @@ export class ProjectsController {
   }
 
   @Delete(':id')
-  @ApiParam({ name: 'id', type: String, description: 'ID проекта' })
+  @ApiParam({ name: 'id', type: String, description: 'Project ID' })
   @ApiResponse({
     status: 200,
-    description: 'Проект успешно удален',
+    description: 'Project successfully deleted',
     type: DeleteProjectResponseDto,
   })
-  @ApiResponse({ status: 404, description: 'Проект не найден' })
+  @ApiResponse({ status: 404, description: 'Project not found' })
   async deleteProject(@Param('id') id: string) {
     try {
       return await this.projectsService.deleteProject(id);

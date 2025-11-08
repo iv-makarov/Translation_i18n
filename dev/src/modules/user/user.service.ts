@@ -1,89 +1,87 @@
 import { EntityManager } from '@mikro-orm/core';
-import {
-  ConflictException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import * as bcrypt from 'bcryptjs';
-import { Session } from 'db/entitis/Session';
 import { Users } from 'db/entitis/Users';
-import { RegisterDto } from 'src/modules/auth/dto/register.dto';
+import { CreateUserDto } from 'src/modules/user/dto/createUser.dto';
+import {
+  CreateUserResponseDto,
+  DeleteUserResponseDto,
+  GetUsersResponseDto,
+  UpdateUserResponseDto,
+} from 'src/modules/user/dto/response.dto';
+import { UpdateUserDto } from 'src/modules/user/dto/updateUser.dto';
 
 @Injectable()
 export class UserService {
   constructor(private readonly em: EntityManager) {}
 
-  async getProfile(accessToken: string): Promise<Omit<Users, 'passwordHash'>> {
-    const session = await this.em.findOne(
-      Session,
-      { accessToken },
-      { populate: ['user'] },
-    );
-    if (!session) {
-      throw new UnauthorizedException('Session not found');
-    }
+  async getUsers(): Promise<GetUsersResponseDto> {
+    const users = await this.em.find(Users, {});
 
-    // Возвращаем пользователя без пароля
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { passwordHash, ...userWithoutPassword } = session.user;
-    return userWithoutPassword;
+    return {
+      users: users.map((user) => {
+        const { passwordHash: _passwordHash, ...rest } = user;
+        void _passwordHash;
+        return rest;
+      }),
+    };
   }
 
-  async updateProfile(
+  async createUser(
+    createUserDto: CreateUserDto,
+  ): Promise<CreateUserResponseDto> {
+    const { password, ...rest } = createUserDto;
+
+    const user = this.em.create(Users, {
+      ...rest,
+      passwordHash: await bcrypt.hash(password, 12),
+      isActive: true,
+      isEmailVerified: false,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+      projectIds: [] as string[],
+    });
+    await this.em.persistAndFlush(user);
+
+    return {
+      message: 'User created successfully',
+      statusCode: HttpStatus.CREATED,
+    };
+  }
+
+  async updateUser(
     id: string,
-    updateUserDto: Partial<RegisterDto>,
-  ): Promise<Omit<Users, 'passwordHash'>> {
-    const user = await this.em.findOne(Users, { id, isActive: true });
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateUserResponseDto> {
+    const user = await this.em.findOne(Users, { id });
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new NotFoundException('User not found');
     }
-
-    // Если обновляется email, проверяем уникальность
-    if (updateUserDto.email && updateUserDto.email !== user.email) {
-      const existingUser = await this.em.findOne(Users, {
-        email: updateUserDto.email,
-      });
-      if (existingUser) {
-        throw new ConflictException('User with this email already exists');
-      }
-    }
-
     user.updatedAt = new Date();
-    if (updateUserDto.firstName) user.firstName = updateUserDto.firstName;
-    if (updateUserDto.lastName) user.lastName = updateUserDto.lastName;
-    if (updateUserDto.email) user.email = updateUserDto.email;
+    user.firstName = updateUserDto.firstName;
+    user.lastName = updateUserDto.lastName;
+    user.email = updateUserDto.email;
+    user.role = updateUserDto.role;
+    user.isActive = updateUserDto.isActive;
 
     await this.em.persistAndFlush(user);
 
-    // Возвращаем пользователя без пароля
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { passwordHash, ...userWithoutPassword } = user;
-    return userWithoutPassword;
+    return {
+      message: 'User updated successfully',
+      statusCode: HttpStatus.OK,
+    };
   }
 
-  async updateUserPassword(
-    id: string,
-    oldPassword: string,
-    newPassword: string,
-  ) {
-    const user = await this.em.findOne(Users, { id, isActive: true });
+  async deleteUser(id: string): Promise<DeleteUserResponseDto> {
+    const user = await this.em.findOne(Users, { id });
     if (!user) {
-      throw new UnauthorizedException('User not found');
+      throw new NotFoundException('User not found');
     }
+    await this.em.removeAndFlush(user);
 
-    // Проверяем старый пароль
-    const isOldPasswordValid = await bcrypt.compare(
-      oldPassword,
-      user.passwordHash,
-    );
-    if (!isOldPasswordValid) {
-      throw new UnauthorizedException('Invalid old password');
-    }
-
-    // Хешируем новый пароль
-    user.passwordHash = await bcrypt.hash(newPassword, 12);
-    user.updatedAt = new Date();
-    await this.em.persistAndFlush(user);
-    return { message: 'Password updated successfully' };
+    return {
+      message: 'User deleted successfully',
+      statusCode: HttpStatus.OK,
+    };
   }
 }

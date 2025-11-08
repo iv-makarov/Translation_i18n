@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/auth/register": {
+    "/register": {
       "post": {
         "description": "Creates a new user and organization. Sets JWT tokens in cookies.",
         "operationId": "AuthController_register",
@@ -72,7 +72,7 @@
         ]
       }
     },
-    "/auth/login": {
+    "/login": {
       "post": {
         "description": "Authenticates user by email and password. Sets JWT tokens in cookies.",
         "operationId": "AuthController_login",
@@ -164,7 +164,7 @@
         ]
       }
     },
-    "/auth/refresh": {
+    "/refresh": {
       "post": {
         "description": "Refreshes access token using refresh token from cookies. Sets new tokens in cookies.",
         "operationId": "AuthController_refreshToken",
@@ -241,7 +241,7 @@
         ]
       }
     },
-    "/auth/logout": {
+    "/logout": {
       "post": {
         "description": "Logs out user, revokes session and clears token cookies. Requires authentication.",
         "operationId": "AuthController_logout",
@@ -286,9 +286,71 @@
         ]
       }
     },
-    "/profile/profile": {
+    "/getProfile": {
       "get": {
-        "operationId": "UserController_getProfile",
+        "operationId": "ProfileController_getProfile",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Profile"
+        ]
+      }
+    },
+    "/updateProfile": {
+      "put": {
+        "operationId": "ProfileController_updateProfile",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateProfileDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Profile"
+        ]
+      }
+    },
+    "/updatePassword": {
+      "put": {
+        "operationId": "ProfileController_updatePassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Profile"
+        ]
+      }
+    },
+    "/user/getUsers": {
+      "get": {
+        "operationId": "UserController_getUsers",
         "parameters": [],
         "responses": {
           "200": {
@@ -300,9 +362,33 @@
         ]
       }
     },
-    "/profile/{id}": {
+    "/user/createUser": {
+      "post": {
+        "operationId": "UserController_createUser",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateUserDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "User"
+        ]
+      }
+    },
+    "/user/updateUser/{id}": {
       "put": {
-        "operationId": "UserController_updateProfile",
+        "operationId": "UserController_updateUser",
         "parameters": [
           {
             "name": "id",
@@ -313,6 +399,16 @@
             }
           }
         ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserDto"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
@@ -323,9 +419,9 @@
         ]
       }
     },
-    "/profile/update-password/{id}": {
-      "put": {
-        "operationId": "UserController_updateUserPassword",
+    "/user/deleteUser/{id}": {
+      "delete": {
+        "operationId": "UserController_deleteUser",
         "parameters": [
           {
             "name": "id",
@@ -406,7 +502,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Список проектов успешно получен",
+            "description": "Projects list successfully received",
             "content": {
               "application/json": {
                 "schema": {
@@ -435,7 +531,7 @@
         },
         "responses": {
           "201": {
-            "description": "Проект успешно создан",
+            "description": "Project successfully created",
             "content": {
               "application/json": {
                 "schema": {
@@ -511,7 +607,7 @@
             "name": "userId",
             "required": true,
             "in": "path",
-            "description": "ID пользователя",
+            "description": "User ID",
             "schema": {
               "type": "string"
             }
@@ -519,7 +615,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Список проектов пользователя успешно получен",
+            "description": "User projects list successfully received",
             "content": {
               "application/json": {
                 "schema": {
@@ -542,7 +638,7 @@
             "name": "id",
             "required": true,
             "in": "path",
-            "description": "ID проекта",
+            "description": "Project ID",
             "schema": {
               "type": "string"
             }
@@ -550,7 +646,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Проект успешно удален",
+            "description": "Project successfully deleted",
             "content": {
               "application/json": {
                 "schema": {
@@ -560,7 +656,7 @@
             }
           },
           "404": {
-            "description": "Проект не найден"
+            "description": "Project not found"
           }
         },
         "tags": [
@@ -886,6 +982,154 @@
         },
         "required": [
           "message"
+        ]
+      },
+      "UpdateProfileDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User Last Name",
+            "example": "Doe"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "User First Name",
+            "example": "John"
+          },
+          "email": {
+            "type": "string",
+            "description": "User Email",
+            "example": "john.doe@example.com"
+          }
+        },
+        "required": [
+          "id",
+          "lastName",
+          "firstName",
+          "email"
+        ]
+      },
+      "UpdatePasswordDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "oldPassword": {
+            "type": "string",
+            "description": "Old Password",
+            "example": "password123"
+          },
+          "newPassword": {
+            "type": "string",
+            "description": "New Password",
+            "example": "password456"
+          },
+          "confirmNewPassword": {
+            "type": "string",
+            "description": "Confirm New Password",
+            "example": "password456"
+          }
+        },
+        "required": [
+          "id",
+          "oldPassword",
+          "newPassword",
+          "confirmNewPassword"
+        ]
+      },
+      "CreateUserDto": {
+        "type": "object",
+        "properties": {
+          "lastName": {
+            "type": "string",
+            "description": "User last name",
+            "example": "Doe"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "User first name",
+            "example": "John"
+          },
+          "email": {
+            "type": "string",
+            "description": "User email",
+            "example": "john.doe@example.com"
+          },
+          "password": {
+            "type": "string",
+            "description": "User password",
+            "example": "password123"
+          },
+          "role": {
+            "type": "string",
+            "description": "User role",
+            "example": "user"
+          },
+          "organizationId": {
+            "type": "string",
+            "description": "User organization id",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          }
+        },
+        "required": [
+          "lastName",
+          "firstName",
+          "email",
+          "password",
+          "role",
+          "organizationId"
+        ]
+      },
+      "UpdateUserDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User Last Name",
+            "example": "Doe"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "User First Name",
+            "example": "John"
+          },
+          "email": {
+            "type": "string",
+            "description": "User Email",
+            "example": "john.doe@example.com"
+          },
+          "role": {
+            "type": "string",
+            "description": "User Role",
+            "example": "user"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "User Is Active",
+            "example": true
+          }
+        },
+        "required": [
+          "id",
+          "lastName",
+          "firstName",
+          "email",
+          "role",
+          "isActive"
         ]
       },
       "UserResponseDto": {

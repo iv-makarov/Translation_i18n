@@ -1,57 +1,57 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
+  Post,
   Put,
-  Req,
-  UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
-import { RequestWithCookies } from 'src/modules/auth/interfaces/request-with-cookies.interface';
 import { UserService } from 'src/modules/user/user.service';
-import { RegisterDto } from '../auth/dto/register.dto';
-
-interface RequestWithUser extends RequestWithCookies {
-  user?: {
-    id: string;
-    email: string;
-    role: string;
-  };
-}
-
-@Controller('profile')
+import {
+  CreateUserResponseDto,
+  DeleteUserResponseDto,
+  GetUsersResponseDto,
+  UpdateUserResponseDto,
+} from 'src/modules/user/dto/response.dto';
+import { CreateUserDto } from 'src/modules/user/dto/createUser.dto';
+import { UpdateUserDto } from 'src/modules/user/dto/updateUser.dto';
+@Controller('user')
 @UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Get('profile')
-  async getProfile(@Req() req: RequestWithUser) {
-    const accessToken = req.cookies?.accessToken;
-    if (!accessToken) {
-      throw new UnauthorizedException('Access token not found');
-    }
-    return this.userService.getProfile(accessToken);
+  @Get('getUsers')
+  async getUsers(): Promise<GetUsersResponseDto> {
+    return (await this.userService.getUsers()) as unknown as GetUsersResponseDto;
   }
 
-  @Put(':id')
-  async updateProfile(
-    @Param('id') id: string,
-    @Body() updateUserDto: Partial<RegisterDto>,
-  ) {
-    return this.userService.updateProfile(id, updateUserDto);
+  @Post('createUser')
+  async createUser(
+    @Body() createUserDto: CreateUserDto,
+  ): Promise<CreateUserResponseDto> {
+    return (await this.userService.createUser(
+      createUserDto,
+    )) as unknown as CreateUserResponseDto;
   }
 
-  @Put('update-password/:id')
-  async updateUserPassword(
+  @Put('updateUser/:id')
+  async updateUser(
     @Param('id') id: string,
-    @Body() body: { oldPassword: string; newPassword: string },
-  ) {
-    return this.userService.updateUserPassword(
+    @Body() updateUserDto: UpdateUserDto,
+  ): Promise<UpdateUserResponseDto> {
+    return (await this.userService.updateUser(
       id,
-      body.oldPassword,
-      body.newPassword,
-    );
+      updateUserDto,
+    )) as unknown as UpdateUserResponseDto;
+  }
+
+  @Delete('deleteUser/:id')
+  async deleteUser(@Param('id') id: string): Promise<DeleteUserResponseDto> {
+    return (await this.userService.deleteUser(
+      id,
+    )) as unknown as DeleteUserResponseDto;
   }
 }
