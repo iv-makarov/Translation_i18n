@@ -30,37 +30,33 @@
           },
           "400": {
             "description": "Validation error",
-            "schema": {
-              "example": {
-                "statusCode": 400,
-                "message": [
-                  "email must be an email",
-                  "password must be longer than or equal to 6 characters"
-                ],
-                "error": "Bad Request"
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "message": [
+                    "email must be an email",
+                    "password must be longer than or equal to 6 characters"
+                  ],
+                  "error": "Bad Request"
                 }
               }
             }
           },
           "409": {
             "description": "User with this email already exists",
-            "schema": {
-              "example": {
-                "statusCode": 409,
-                "message": "User with this email already exists",
-                "error": "Conflict"
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 409,
+                  "message": "User with this email already exists",
+                  "error": "Conflict"
                 }
               }
             }
@@ -101,58 +97,54 @@
           },
           "400": {
             "description": "Validation error",
-            "schema": {
-              "example": {
-                "statusCode": 400,
-                "message": [
-                  "email must be an email",
-                  "password must be longer than or equal to 6 characters"
-                ],
-                "error": "Bad Request"
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 400,
+                  "message": [
+                    "email must be an email",
+                    "password must be longer than or equal to 6 characters"
+                  ],
+                  "error": "Bad Request"
                 }
               }
             }
           },
           "401": {
             "description": "Invalid credentials or user is inactive",
-            "schema": {
-              "examples": {
-                "userNotFound": {
-                  "summary": "User not found",
-                  "value": {
-                    "statusCode": 401,
-                    "message": "User not found",
-                    "error": "Unauthorized"
-                  }
-                },
-                "incorrectPassword": {
-                  "summary": "Incorrect password",
-                  "value": {
-                    "statusCode": 401,
-                    "message": "Password is incorrect",
-                    "error": "Unauthorized"
-                  }
-                },
-                "userDeactivated": {
-                  "summary": "Account deactivated",
-                  "value": {
-                    "statusCode": 401,
-                    "message": "User account is deactivated",
-                    "error": "Unauthorized"
-                  }
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "examples": {
+                  "userNotFound": {
+                    "summary": "User not found",
+                    "value": {
+                      "statusCode": 401,
+                      "message": "User not found",
+                      "error": "Unauthorized"
+                    }
+                  },
+                  "incorrectPassword": {
+                    "summary": "Incorrect password",
+                    "value": {
+                      "statusCode": 401,
+                      "message": "Password is incorrect",
+                      "error": "Unauthorized"
+                    }
+                  },
+                  "userDeactivated": {
+                    "summary": "Account deactivated",
+                    "value": {
+                      "statusCode": 401,
+                      "message": "User account is deactivated",
+                      "error": "Unauthorized"
+                    }
+                  }
                 }
               }
             }
@@ -182,54 +174,52 @@
           },
           "401": {
             "description": "Refresh token missing, invalid or session expired",
-            "schema": {
-              "examples": {
-                "tokenNotFound": {
-                  "summary": "Refresh token not found",
-                  "value": {
-                    "statusCode": 401,
-                    "message": "Refresh token not found",
-                    "error": "Unauthorized"
-                  }
-                },
-                "sessionNotFound": {
-                  "summary": "Session not found or revoked",
-                  "value": {
-                    "statusCode": 401,
-                    "message": "Session not found or revoked",
-                    "error": "Unauthorized"
-                  }
-                },
-                "sessionExpired": {
-                  "summary": "Session expired",
-                  "value": {
-                    "statusCode": 401,
-                    "message": "Session expired",
-                    "error": "Unauthorized"
-                  }
-                },
-                "invalidToken": {
-                  "summary": "Invalid refresh token",
-                  "value": {
-                    "statusCode": 401,
-                    "message": "Invalid refresh token",
-                    "error": "Unauthorized"
-                  }
-                },
-                "userInactive": {
-                  "summary": "User inactive",
-                  "value": {
-                    "statusCode": 401,
-                    "message": "User not found or inactive",
-                    "error": "Unauthorized"
-                  }
-                }
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "examples": {
+                  "tokenNotFound": {
+                    "summary": "Refresh token not found",
+                    "value": {
+                      "statusCode": 401,
+                      "message": "Refresh token not found",
+                      "error": "Unauthorized"
+                    }
+                  },
+                  "sessionNotFound": {
+                    "summary": "Session not found or revoked",
+                    "value": {
+                      "statusCode": 401,
+                      "message": "Session not found or revoked",
+                      "error": "Unauthorized"
+                    }
+                  },
+                  "sessionExpired": {
+                    "summary": "Session expired",
+                    "value": {
+                      "statusCode": 401,
+                      "message": "Session expired",
+                      "error": "Unauthorized"
+                    }
+                  },
+                  "invalidToken": {
+                    "summary": "Invalid refresh token",
+                    "value": {
+                      "statusCode": 401,
+                      "message": "Invalid refresh token",
+                      "error": "Unauthorized"
+                    }
+                  },
+                  "userInactive": {
+                    "summary": "User inactive",
+                    "value": {
+                      "statusCode": 401,
+                      "message": "User not found or inactive",
+                      "error": "Unauthorized"
+                    }
+                  }
                 }
               }
             }
@@ -259,17 +249,15 @@
           },
           "401": {
             "description": "User not authenticated",
-            "schema": {
-              "example": {
-                "statusCode": 401,
-                "message": "Unauthorized",
-                "error": "Unauthorized"
-              }
-            },
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorResponseDto"
+                },
+                "example": {
+                  "statusCode": 401,
+                  "message": "Unauthorized",
+                  "error": "Unauthorized"
                 }
               }
             }
@@ -292,7 +280,44 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Profile",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetProfileResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -316,7 +341,44 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "Profile updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateProfileResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -340,7 +402,44 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "Password updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdatePasswordResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -354,7 +453,44 @@
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Users",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetUsersResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -377,8 +513,45 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateUserResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -411,7 +584,44 @@
         },
         "responses": {
           "200": {
-            "description": ""
+            "description": "User updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UpdateUserResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -434,7 +644,44 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "User deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteUserResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -499,7 +746,44 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Projects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetProjectsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -510,20 +794,57 @@
     "/getProject/{id}": {
       "get": {
         "operationId": "ProjectsController_getProjectById",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GetProjectByIdDto"
-              }
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Project ID",
+            "schema": {
+              "type": "string"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Project",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetProjectByIdResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -546,8 +867,45 @@
           }
         },
         "responses": {
-          "201": {
-            "description": ""
+          "200": {
+            "description": "Project created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CreateProjectResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -558,20 +916,57 @@
     "/deleteProject/{id}": {
       "delete": {
         "operationId": "ProjectsController_deleteProject",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/DeleteProjectDto"
-              }
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Project ID",
+            "schema": {
+              "type": "string"
             }
           }
-        },
+        ],
         "responses": {
           "200": {
-            "description": ""
+            "description": "Project deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteProjectResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorResponseDto"
+                }
+              }
+            }
           }
         },
         "tags": [
@@ -899,6 +1294,69 @@
           "message"
         ]
       },
+      "GetProfileResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "User Last Name",
+            "example": "Doe"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "User First Name",
+            "example": "John"
+          },
+          "email": {
+            "type": "string",
+            "description": "User Email",
+            "example": "john.doe@example.com"
+          },
+          "role": {
+            "type": "string",
+            "description": "User Role",
+            "example": "user"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "User Is Active",
+            "example": true
+          },
+          "isEmailVerified": {
+            "type": "boolean",
+            "description": "User Is Email Verified",
+            "example": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "User Created At",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "User Updated At",
+            "example": "2021-01-01T00:00:00.000Z"
+          }
+        },
+        "required": [
+          "id",
+          "lastName",
+          "firstName",
+          "email",
+          "role",
+          "isActive",
+          "isEmailVerified",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
       "UpdateProfileDto": {
         "type": "object",
         "properties": {
@@ -930,6 +1388,25 @@
           "email"
         ]
       },
+      "UpdateProfileResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Success update profile message",
+            "example": "Profile updated successfully"
+          },
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code",
+            "example": 200
+          }
+        },
+        "required": [
+          "message",
+          "statusCode"
+        ]
+      },
       "UpdatePasswordDto": {
         "type": "object",
         "properties": {
@@ -959,6 +1436,126 @@
           "oldPassword",
           "newPassword",
           "confirmNewPassword"
+        ]
+      },
+      "UpdatePasswordResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Success update password message",
+            "example": "Password updated successfully"
+          },
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code",
+            "example": 200
+          }
+        },
+        "required": [
+          "message",
+          "statusCode"
+        ]
+      },
+      "Users": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "User ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "lastName": {
+            "type": "string",
+            "description": "Last Name",
+            "example": "Doe"
+          },
+          "firstName": {
+            "type": "string",
+            "description": "First Name",
+            "example": "John"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email",
+            "example": "john@example.com"
+          },
+          "passwordHash": {
+            "type": "string",
+            "description": "Password",
+            "example": "password123"
+          },
+          "role": {
+            "type": "string",
+            "description": "Role",
+            "example": "user"
+          },
+          "isActive": {
+            "type": "boolean",
+            "description": "Is Active",
+            "example": true
+          },
+          "isEmailVerified": {
+            "type": "boolean",
+            "description": "Is Email Verified",
+            "example": true
+          },
+          "createdAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Created At",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "updatedAt": {
+            "format": "date-time",
+            "type": "string",
+            "description": "Updated At",
+            "example": "2021-01-01T00:00:00.000Z"
+          },
+          "projectIds": {
+            "description": "Project IDs",
+            "example": [
+              "123e4567-e89b-12d3-a456-426614174000"
+            ],
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "organizationId": {
+            "type": "string",
+            "description": "Organization ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          }
+        },
+        "required": [
+          "id",
+          "lastName",
+          "firstName",
+          "email",
+          "passwordHash",
+          "role",
+          "isActive",
+          "isEmailVerified",
+          "createdAt",
+          "updatedAt",
+          "projectIds",
+          "organizationId"
+        ]
+      },
+      "GetUsersResponseDto": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "description": "Users",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Users"
+            }
+          }
+        },
+        "required": [
+          "users"
         ]
       },
       "CreateUserDto": {
@@ -1004,6 +1601,25 @@
           "organizationId"
         ]
       },
+      "CreateUserResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Success create user message",
+            "example": "User created successfully"
+          },
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code",
+            "example": 200
+          }
+        },
+        "required": [
+          "message",
+          "statusCode"
+        ]
+      },
       "UpdateUserDto": {
         "type": "object",
         "properties": {
@@ -1047,17 +1663,77 @@
           "isActive"
         ]
       },
-      "GetProjectByIdDto": {
+      "UpdateUserResponseDto": {
         "type": "object",
         "properties": {
-          "id": {
+          "message": {
             "type": "string",
-            "description": "Project ID",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
+            "description": "Success update user message",
+            "example": "User updated successfully"
+          },
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code",
+            "example": 200
           }
         },
         "required": [
-          "id"
+          "message",
+          "statusCode"
+        ]
+      },
+      "DeleteUserResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Success delete user message",
+            "example": "User deleted successfully"
+          },
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code",
+            "example": 200
+          }
+        },
+        "required": [
+          "message",
+          "statusCode"
+        ]
+      },
+      "Projects": {
+        "type": "object",
+        "properties": {}
+      },
+      "GetProjectsResponseDto": {
+        "type": "object",
+        "properties": {
+          "projects": {
+            "description": "Projects",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Projects"
+            }
+          }
+        },
+        "required": [
+          "projects"
+        ]
+      },
+      "GetProjectByIdResponseDto": {
+        "type": "object",
+        "properties": {
+          "project": {
+            "description": "Project",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Projects"
+              }
+            ]
+          }
+        },
+        "required": [
+          "project"
         ]
       },
       "CreateProjectDto": {
@@ -1101,17 +1777,42 @@
           "description"
         ]
       },
-      "DeleteProjectDto": {
+      "CreateProjectResponseDto": {
         "type": "object",
         "properties": {
-          "id": {
+          "message": {
             "type": "string",
-            "description": "Project ID",
-            "example": "123e4567-e89b-12d3-a456-426614174000"
+            "description": "Success create project message",
+            "example": "Project created successfully"
+          },
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code",
+            "example": 200
           }
         },
         "required": [
-          "id"
+          "message",
+          "statusCode"
+        ]
+      },
+      "DeleteProjectResponseDto": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "description": "Success delete project message",
+            "example": "Project deleted successfully"
+          },
+          "statusCode": {
+            "type": "number",
+            "description": "HTTP status code",
+            "example": 200
+          }
+        },
+        "required": [
+          "message",
+          "statusCode"
         ]
       },
       "Translations": {

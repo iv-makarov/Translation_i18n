@@ -57,27 +57,23 @@ export class AuthController {
     status: 400,
     description: 'Validation error',
     type: ErrorResponseDto,
-    schema: {
-      example: {
-        statusCode: 400,
-        message: [
-          'email must be an email',
-          'password must be longer than or equal to 6 characters',
-        ],
-        error: 'Bad Request',
-      },
+    example: {
+      statusCode: 400,
+      message: [
+        'email must be an email',
+        'password must be longer than or equal to 6 characters',
+      ],
+      error: 'Bad Request',
     },
   })
   @ApiResponse({
     status: 409,
     description: 'User with this email already exists',
     type: ErrorResponseDto,
-    schema: {
-      example: {
-        statusCode: 409,
-        message: 'User with this email already exists',
-        error: 'Conflict',
-      },
+    example: {
+      statusCode: 409,
+      message: 'User with this email already exists',
+      error: 'Conflict',
     },
   })
   async register(@Body() registerDto: RegisterDto) {
@@ -110,46 +106,42 @@ export class AuthController {
     status: 400,
     description: 'Validation error',
     type: ErrorResponseDto,
-    schema: {
-      example: {
-        statusCode: 400,
-        message: [
-          'email must be an email',
-          'password must be longer than or equal to 6 characters',
-        ],
-        error: 'Bad Request',
-      },
+    example: {
+      statusCode: 400,
+      message: [
+        'email must be an email',
+        'password must be longer than or equal to 6 characters',
+      ],
+      error: 'Bad Request',
     },
   })
   @ApiResponse({
     status: 401,
     description: 'Invalid credentials or user is inactive',
     type: ErrorResponseDto,
-    schema: {
-      examples: {
-        userNotFound: {
-          summary: 'User not found',
-          value: {
-            statusCode: 401,
-            message: 'User not found',
-            error: 'Unauthorized',
-          },
+    examples: {
+      userNotFound: {
+        summary: 'User not found',
+        value: {
+          statusCode: 401,
+          message: 'User not found',
+          error: 'Unauthorized',
         },
-        incorrectPassword: {
-          summary: 'Incorrect password',
-          value: {
-            statusCode: 401,
-            message: 'Password is incorrect',
-            error: 'Unauthorized',
-          },
+      },
+      incorrectPassword: {
+        summary: 'Incorrect password',
+        value: {
+          statusCode: 401,
+          message: 'Password is incorrect',
+          error: 'Unauthorized',
         },
-        userDeactivated: {
-          summary: 'Account deactivated',
-          value: {
-            statusCode: 401,
-            message: 'User account is deactivated',
-            error: 'Unauthorized',
-          },
+      },
+      userDeactivated: {
+        summary: 'Account deactivated',
+        value: {
+          statusCode: 401,
+          message: 'User account is deactivated',
+          error: 'Unauthorized',
         },
       },
     },
@@ -185,47 +177,45 @@ export class AuthController {
     status: 401,
     description: 'Refresh token missing, invalid or session expired',
     type: ErrorResponseDto,
-    schema: {
-      examples: {
-        tokenNotFound: {
-          summary: 'Refresh token not found',
-          value: {
-            statusCode: 401,
-            message: 'Refresh token not found',
-            error: 'Unauthorized',
-          },
+    examples: {
+      tokenNotFound: {
+        summary: 'Refresh token not found',
+        value: {
+          statusCode: 401,
+          message: 'Refresh token not found',
+          error: 'Unauthorized',
         },
-        sessionNotFound: {
-          summary: 'Session not found or revoked',
-          value: {
-            statusCode: 401,
-            message: 'Session not found or revoked',
-            error: 'Unauthorized',
-          },
+      },
+      sessionNotFound: {
+        summary: 'Session not found or revoked',
+        value: {
+          statusCode: 401,
+          message: 'Session not found or revoked',
+          error: 'Unauthorized',
         },
-        sessionExpired: {
-          summary: 'Session expired',
-          value: {
-            statusCode: 401,
-            message: 'Session expired',
-            error: 'Unauthorized',
-          },
+      },
+      sessionExpired: {
+        summary: 'Session expired',
+        value: {
+          statusCode: 401,
+          message: 'Session expired',
+          error: 'Unauthorized',
         },
-        invalidToken: {
-          summary: 'Invalid refresh token',
-          value: {
-            statusCode: 401,
-            message: 'Invalid refresh token',
-            error: 'Unauthorized',
-          },
+      },
+      invalidToken: {
+        summary: 'Invalid refresh token',
+        value: {
+          statusCode: 401,
+          message: 'Invalid refresh token',
+          error: 'Unauthorized',
         },
-        userInactive: {
-          summary: 'User inactive',
-          value: {
-            statusCode: 401,
-            message: 'User not found or inactive',
-            error: 'Unauthorized',
-          },
+      },
+      userInactive: {
+        summary: 'User inactive',
+        value: {
+          statusCode: 401,
+          message: 'User not found or inactive',
+          error: 'Unauthorized',
         },
       },
     },
@@ -269,12 +259,10 @@ export class AuthController {
     status: 401,
     description: 'User not authenticated',
     type: ErrorResponseDto,
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'Unauthorized',
-        error: 'Unauthorized',
-      },
+    example: {
+      statusCode: 401,
+      message: 'Unauthorized',
+      error: 'Unauthorized',
     },
   })
   async logout(

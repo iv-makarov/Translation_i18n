@@ -3,14 +3,14 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
+import { ApiParam, ApiResponse } from '@nestjs/swagger';
+import { ErrorResponseDto } from 'src/modules/auth/dto/response.dto';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
-import { DeleteProjectDto } from 'src/modules/projects/dto/deleteProject.dto';
-import { CreateProjectDto } from './dto/createProjects.dto';
-import { ProjectsService } from './projects.service';
 import { GetProjectsDto } from 'src/modules/projects/dto/getProjects.dto';
 import {
   CreateProjectResponseDto,
@@ -18,9 +18,8 @@ import {
   GetProjectByIdResponseDto,
   GetProjectsResponseDto,
 } from 'src/modules/projects/dto/response.dto';
-import { GetProjectByIdDto } from 'src/modules/projects/dto/getProjectById.dto';
-import { ErrorResponseDto } from 'src/modules/auth/dto/response.dto';
-import { ApiResponse } from '@nestjs/swagger';
+import { CreateProjectDto } from './dto/createProjects.dto';
+import { ProjectsService } from './projects.service';
 
 @Controller()
 @UseGuards(JwtAuthGuard)
@@ -77,11 +76,17 @@ export class ProjectsController {
     description: 'User with this email already exists',
     type: ErrorResponseDto,
   })
+  @ApiParam({
+    name: 'id',
+    description: 'Project ID',
+    type: String,
+    required: true,
+  })
   async getProjectById(
-    @Body() getProjectByIdDto: GetProjectByIdDto,
+    @Param('id') id: string,
   ): Promise<GetProjectByIdResponseDto> {
     return (await this.projectsService.getProjectById(
-      getProjectByIdDto.id,
+      id,
     )) as unknown as GetProjectByIdResponseDto;
   }
 
@@ -131,11 +136,17 @@ export class ProjectsController {
     description: 'User with this email already exists',
     type: ErrorResponseDto,
   })
+  @ApiParam({
+    name: 'id',
+    description: 'Project ID',
+    type: String,
+    required: true,
+  })
   async deleteProject(
-    @Body() deleteProjectDto: DeleteProjectDto,
+    @Param('id') id: string,
   ): Promise<DeleteProjectResponseDto> {
     return (await this.projectsService.deleteProject(
-      deleteProjectDto.id,
+      id,
     )) as unknown as DeleteProjectResponseDto;
   }
 }

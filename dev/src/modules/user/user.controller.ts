@@ -8,19 +8,18 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
+import { ErrorResponseDto } from 'src/modules/auth/dto/response.dto';
 import { JwtAuthGuard } from 'src/modules/auth/guards/jwt-auth.guard';
-import { UserService } from 'src/modules/user/user.service';
+import { CreateUserDto } from 'src/modules/user/dto/createUser.dto';
 import {
   CreateUserResponseDto,
   DeleteUserResponseDto,
   GetUsersResponseDto,
   UpdateUserResponseDto,
 } from 'src/modules/user/dto/response.dto';
-import { CreateUserDto } from 'src/modules/user/dto/createUser.dto';
 import { UpdateUserDto } from 'src/modules/user/dto/updateUser.dto';
-import { ErrorResponseDto } from 'src/modules/auth/dto/response.dto';
-import { ApiResponse } from '@nestjs/swagger';
-import { DeleteUserDto } from 'src/modules/user/dto/deleteUser.dto';
+import { UserService } from 'src/modules/user/user.service';
 @Controller()
 @UseGuards(JwtAuthGuard)
 export class UserController {
@@ -132,11 +131,9 @@ export class UserController {
     description: 'User with this email already exists',
     type: ErrorResponseDto,
   })
-  async deleteUser(
-    @Body() deleteUserDto: DeleteUserDto,
-  ): Promise<DeleteUserResponseDto> {
+  async deleteUser(@Param('id') id: string): Promise<DeleteUserResponseDto> {
     return (await this.userService.deleteUser(
-      deleteUserDto.id,
+      id,
     )) as unknown as DeleteUserResponseDto;
   }
 }
