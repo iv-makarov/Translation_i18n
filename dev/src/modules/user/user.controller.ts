@@ -18,17 +18,60 @@ import {
 } from 'src/modules/user/dto/response.dto';
 import { CreateUserDto } from 'src/modules/user/dto/createUser.dto';
 import { UpdateUserDto } from 'src/modules/user/dto/updateUser.dto';
+import { ErrorResponseDto } from 'src/modules/auth/dto/response.dto';
+import { ApiResponse } from '@nestjs/swagger';
+import { DeleteUserDto } from 'src/modules/user/dto/deleteUser.dto';
 @Controller()
 @UseGuards(JwtAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('getUsers')
+  @ApiResponse({
+    status: 200,
+    description: 'Users',
+    type: GetUsersResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'User with this email already exists',
+    type: ErrorResponseDto,
+  })
   async getUsers(): Promise<GetUsersResponseDto> {
     return (await this.userService.getUsers()) as unknown as GetUsersResponseDto;
   }
 
   @Post('createUser')
+  @ApiResponse({
+    status: 200,
+    description: 'User created successfully',
+    type: CreateUserResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'User with this email already exists',
+    type: ErrorResponseDto,
+  })
   async createUser(
     @Body() createUserDto: CreateUserDto,
   ): Promise<CreateUserResponseDto> {
@@ -38,6 +81,26 @@ export class UserController {
   }
 
   @Put('updateUser/:id')
+  @ApiResponse({
+    status: 200,
+    description: 'User updated successfully',
+    type: UpdateUserResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'User with this email already exists',
+    type: ErrorResponseDto,
+  })
   async updateUser(
     @Param('id') id: string,
     @Body() updateUserDto: UpdateUserDto,
@@ -49,9 +112,31 @@ export class UserController {
   }
 
   @Delete('deleteUser/:id')
-  async deleteUser(@Param('id') id: string): Promise<DeleteUserResponseDto> {
+  @ApiResponse({
+    status: 200,
+    description: 'User deleted successfully',
+    type: DeleteUserResponseDto,
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Validation error',
+    type: ErrorResponseDto,
+  })
+  @ApiResponse({
+    status: 409,
+    description: 'User with this email already exists',
+    type: ErrorResponseDto,
+  })
+  async deleteUser(
+    @Body() deleteUserDto: DeleteUserDto,
+  ): Promise<DeleteUserResponseDto> {
     return (await this.userService.deleteUser(
-      id,
+      deleteUserDto.id,
     )) as unknown as DeleteUserResponseDto;
   }
 }

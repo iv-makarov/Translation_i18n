@@ -442,17 +442,16 @@
         ]
       }
     },
-    "/projects": {
+    "/getProjects": {
       "get": {
         "operationId": "ProjectsController_getProjects",
         "parameters": [
           {
             "name": "page",
-            "required": false,
+            "required": true,
             "in": "query",
-            "description": "Номер страницы для пагинации",
+            "description": "Page",
             "schema": {
-              "minimum": 1,
               "example": 1,
               "type": "number"
             }
@@ -461,10 +460,8 @@
             "name": "limit",
             "required": false,
             "in": "query",
-            "description": "Количество проектов на странице",
+            "description": "Limit",
             "schema": {
-              "minimum": 1,
-              "maximum": 100,
               "example": 10,
               "type": "number"
             }
@@ -473,7 +470,7 @@
             "name": "search",
             "required": false,
             "in": "query",
-            "description": "Поисковый запрос для фильтрации проектов по названию или описанию",
+            "description": "Search",
             "schema": {
               "example": "project",
               "type": "string"
@@ -483,7 +480,7 @@
             "name": "isVerified",
             "required": false,
             "in": "query",
-            "description": "Фильтр по статусу верификации проекта",
+            "description": "Is verified",
             "schema": {
               "example": true,
               "type": "boolean"
@@ -491,31 +488,50 @@
           },
           {
             "name": "isBlocked",
-            "required": false,
+            "required": true,
             "in": "query",
-            "description": "Фильтр по статусу блокировки проекта",
+            "description": "Is blocked",
             "schema": {
-              "example": false,
+              "example": true,
               "type": "boolean"
             }
           }
         ],
         "responses": {
           "200": {
-            "description": "Projects list successfully received",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectsListResponseDto"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
           "Projects"
         ]
-      },
+      }
+    },
+    "/getProject/{id}": {
+      "get": {
+        "operationId": "ProjectsController_getProjectById",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GetProjectByIdDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
+          }
+        },
+        "tags": [
+          "Projects"
+        ]
+      }
+    },
+    "/createProject": {
       "post": {
         "operationId": "ProjectsController_createProject",
         "parameters": [],
@@ -531,14 +547,7 @@
         },
         "responses": {
           "201": {
-            "description": "Project successfully created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/CreateProjectResponseDto"
-                }
-              }
-            }
+            "description": ""
           }
         },
         "tags": [
@@ -546,117 +555,23 @@
         ]
       }
     },
-    "/projects/user/{userId}": {
-      "get": {
-        "operationId": "ProjectsController_getProjectsByUser",
-        "parameters": [
-          {
-            "name": "page",
-            "required": false,
-            "in": "query",
-            "description": "Номер страницы для пагинации",
-            "schema": {
-              "minimum": 1,
-              "example": 1,
-              "type": "number"
-            }
-          },
-          {
-            "name": "limit",
-            "required": false,
-            "in": "query",
-            "description": "Количество проектов на странице",
-            "schema": {
-              "minimum": 1,
-              "maximum": 100,
-              "example": 10,
-              "type": "number"
-            }
-          },
-          {
-            "name": "search",
-            "required": false,
-            "in": "query",
-            "description": "Поисковый запрос для фильтрации проектов по названию или описанию",
-            "schema": {
-              "example": "project",
-              "type": "string"
-            }
-          },
-          {
-            "name": "isVerified",
-            "required": false,
-            "in": "query",
-            "description": "Фильтр по статусу верификации проекта",
-            "schema": {
-              "example": true,
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "isBlocked",
-            "required": false,
-            "in": "query",
-            "description": "Фильтр по статусу блокировки проекта",
-            "schema": {
-              "example": false,
-              "type": "boolean"
-            }
-          },
-          {
-            "name": "userId",
-            "required": true,
-            "in": "path",
-            "description": "User ID",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "User projects list successfully received",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProjectsListResponseDto"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "Projects"
-        ]
-      }
-    },
-    "/projects/{id}": {
+    "/deleteProject/{id}": {
       "delete": {
         "operationId": "ProjectsController_deleteProject",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "Project ID",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Project successfully deleted",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/DeleteProjectResponseDto"
-                }
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DeleteProjectDto"
               }
             }
-          },
-          "404": {
-            "description": "Project not found"
+          }
+        },
+        "responses": {
+          "200": {
+            "description": ""
           }
         },
         "tags": [
@@ -1132,122 +1047,17 @@
           "isActive"
         ]
       },
-      "UserResponseDto": {
+      "GetProjectByIdDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "description": "Уникальный идентификатор пользователя",
-            "example": "ca2b82f0-e49c-42ad-a105-b76043ea425b"
-          },
-          "firstName": {
-            "type": "string",
-            "description": "Имя пользователя",
-            "example": "Иван"
-          },
-          "lastName": {
-            "type": "string",
-            "description": "Фамилия пользователя",
-            "example": "Иванов"
+            "description": "Project ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
           }
         },
         "required": [
-          "id",
-          "firstName",
-          "lastName"
-        ]
-      },
-      "ProjectResponseDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Уникальный идентификатор проекта",
-            "example": "ca2b82f0-e49c-42ad-a105-b76043ea425b"
-          },
-          "name": {
-            "type": "string",
-            "description": "Название проекта",
-            "example": "Мой проект"
-          },
-          "description": {
-            "type": "string",
-            "description": "Описание проекта",
-            "example": "Описание моего проекта"
-          },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Дата создания проекта",
-            "example": "2024-01-15T10:30:00.000Z"
-          },
-          "updatedAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Дата последнего обновления проекта",
-            "example": "2024-01-15T10:30:00.000Z"
-          },
-          "isVerified": {
-            "type": "boolean",
-            "description": "Статус верификации проекта",
-            "example": false
-          },
-          "isBlocked": {
-            "type": "boolean",
-            "description": "Статус блокировки проекта",
-            "example": false
-          },
-          "user": {
-            "description": "Информация о пользователе",
-            "allOf": [
-              {
-                "$ref": "#/components/schemas/UserResponseDto"
-              }
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "description",
-          "createdAt",
-          "updatedAt",
-          "isVerified",
-          "isBlocked",
-          "user"
-        ]
-      },
-      "ProjectsListResponseDto": {
-        "type": "object",
-        "properties": {
-          "data": {
-            "description": "Массив проектов",
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ProjectResponseDto"
-            }
-          },
-          "total": {
-            "type": "number",
-            "description": "Общее количество проектов",
-            "example": 25
-          },
-          "page": {
-            "type": "number",
-            "description": "Текущая страница",
-            "example": 1
-          },
-          "limit": {
-            "type": "number",
-            "description": "Количество проектов на странице",
-            "example": 10
-          }
-        },
-        "required": [
-          "data",
-          "total",
-          "page",
-          "limit"
+          "id"
         ]
       },
       "CreateProjectDto": {
@@ -1255,16 +1065,16 @@
         "properties": {
           "name": {
             "type": "string",
-            "description": "Название проекта",
-            "example": "Мой проект"
+            "description": "Project name",
+            "example": "My project"
           },
           "description": {
             "type": "string",
-            "description": "Описание проекта",
-            "example": "Описание моего проекта"
+            "description": "Project description",
+            "example": "Description of my project"
           },
           "whiteUrls": {
-            "description": "Белый список URL для проекта",
+            "description": "White list of URLs for the project",
             "example": [
               "https://example.com",
               "https://test.com"
@@ -1275,7 +1085,7 @@
             }
           },
           "nameSpaces": {
-            "description": "Пространства имен для проекта",
+            "description": "Namespaces for the project",
             "example": [
               "my-project-namespace",
               "another-namespace"
@@ -1291,68 +1101,17 @@
           "description"
         ]
       },
-      "CreateProjectResponseDto": {
+      "DeleteProjectDto": {
         "type": "object",
         "properties": {
           "id": {
             "type": "string",
-            "description": "Уникальный идентификатор созданного проекта",
-            "example": "ca2b82f0-e49c-42ad-a105-b76043ea425b"
-          },
-          "name": {
-            "type": "string",
-            "description": "Название проекта",
-            "example": "Мой проект"
-          },
-          "description": {
-            "type": "string",
-            "description": "Описание проекта",
-            "example": "Описание моего проекта"
-          },
-          "createdAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Дата создания проекта",
-            "example": "2024-01-15T10:30:00.000Z"
-          },
-          "updatedAt": {
-            "format": "date-time",
-            "type": "string",
-            "description": "Дата последнего обновления проекта",
-            "example": "2024-01-15T10:30:00.000Z"
-          },
-          "isVerified": {
-            "type": "boolean",
-            "description": "Статус верификации проекта",
-            "example": false
-          },
-          "isBlocked": {
-            "type": "boolean",
-            "description": "Статус блокировки проекта",
-            "example": false
+            "description": "Project ID",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
           }
         },
         "required": [
-          "id",
-          "name",
-          "description",
-          "createdAt",
-          "updatedAt",
-          "isVerified",
-          "isBlocked"
-        ]
-      },
-      "DeleteProjectResponseDto": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string",
-            "description": "Сообщение об успешном удалении",
-            "example": "Project deleted successfully"
-          }
-        },
-        "required": [
-          "message"
+          "id"
         ]
       },
       "Translations": {
