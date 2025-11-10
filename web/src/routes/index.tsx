@@ -7,7 +7,7 @@ export const Route = createFileRoute("/")({
 });
 
 function RouteComponent() {
-  const { isAuthenticated, isLoading } = useAuthContext();
+  const { isAuth, isLoading } = useAuthContext();
 
   // Показываем загрузку пока проверяем авторизацию
   if (isLoading) {
@@ -17,7 +17,7 @@ function RouteComponent() {
   }
 
   // Редирект в зависимости от статуса авторизации
-  if (isAuthenticated) {
+  if (isAuth) {
     // Если авторизован - редирект на главную защищенную страницу
     return <Navigate to="/dashboard" />;
   } else {

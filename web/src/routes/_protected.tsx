@@ -1,12 +1,12 @@
 import { useAuthContext } from "@/processes/authProvider/authProvider";
-import { getUserControllerGetProfileQueryOptions } from "@/shared/api/endpoints/user/user";
+import { getProfileControllerGetProfileQueryOptions } from "@/shared/api/endpoints/profile/profile";
 import ProtectedWrapper from "@/widgets/wrappers/protectedWrapper";
 import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_protected")({
   component: RouteComponent,
   loader: async ({ context }) => {
-    const queryOptions = getUserControllerGetProfileQueryOptions();
+    const queryOptions = getProfileControllerGetProfileQueryOptions();
     await context.queryClient.ensureQueryData(queryOptions);
     return {};
   },

@@ -1,6 +1,6 @@
 import LoginForm from "@/features/login/loginForm";
 import { useAuthContext } from "@/processes/authProvider/authProvider";
-import { useAuthControllerLogin } from "@/shared/api/endpoints/auth/auth";
+import { useAuthControllerLogin } from "@/shared/api/endpoints/authentication/authentication";
 import {
   Card,
   CardContent,

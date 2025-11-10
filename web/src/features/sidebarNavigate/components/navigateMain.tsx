@@ -6,7 +6,7 @@ import {
   SidebarMenuItem,
 } from "@/shared/components/ui/sidebar";
 import { useNavigate } from "@tanstack/react-router";
-import { FileText, Home } from "lucide-react";
+import { FileText, Home, Users } from "lucide-react";
 
 export default function NavigateMain() {
   const navigate = useNavigate();
@@ -19,7 +19,12 @@ export default function NavigateMain() {
     {
       title: "Projects",
       icon: FileText,
-        path: "/projects",
+      path: "/projects",
+    },
+    {
+      title: "Users",
+      icon: Users,
+      path: "/users",
     },
   ];
   return (

@@ -11,7 +11,11 @@ import { useMemo } from "react";
 export const Route = createFileRoute("/_protected/projects/")({
   component: RouteComponent,
   loader: async ({ context }) => {
-    const queryOptions = getProjectsControllerGetProjectsQueryOptions();
+    const queryOptions = getProjectsControllerGetProjectsQueryOptions({
+      page: 1,
+      isBlocked: false,
+      isVerified: false,
+    });
     await context.queryClient.ensureQueryData(queryOptions);
     return {};
   },

@@ -1,7 +1,7 @@
 import { useAuthContext } from "@/processes/authProvider/authProvider";
-import { useAuthControllerLogout } from "@/shared/api/endpoints/auth/auth";
-import { useUserControllerGetProfile } from "@/shared/api/endpoints/user/user";
-import type { UserResponseDto } from "@/shared/api/schemas/userResponseDto";
+import { useAuthControllerLogout } from "@/shared/api/endpoints/authentication/authentication";
+import { useProfileControllerGetProfile } from "@/shared/api/endpoints/profile/profile";
+import type { GetProfileResponseDto } from "@/shared/api/schemas/getProfileResponseDto";
 import { Avatar, AvatarFallback } from "@/shared/components/ui/avatar";
 import {
   DropdownMenu,
@@ -18,7 +18,7 @@ import {
   SidebarMenuItem,
 } from "@/shared/components/ui/sidebar";
 import { useNavigate } from "@tanstack/react-router";
-import type { AxiosError, AxiosResponse } from "axios";
+import type { AxiosError } from "axios";
 import { BadgeCheck, ChevronsUpDown, LogOut } from "lucide-react";
 import { toast } from "sonner";
 
@@ -27,12 +27,9 @@ export default function NavigateProfile() {
   const { mutateAsync: logout } = useAuthControllerLogout();
   const navigate = useNavigate();
 
-  // Получаем данные профиля из query (загружены в loader)
-  const { data: profileResponse } =
-    useUserControllerGetProfile<AxiosResponse<UserResponseDto>>();
-
-  // Извлекаем данные пользователя из ответа
-  const profile = profileResponse?.data;
+  // Получаем данные профиля из запроса (данные уже предзагружены в loader)
+  const { data: profileResponse } = useProfileControllerGetProfile();
+  const profile = profileResponse?.data as GetProfileResponseDto | undefined;
 
   // Формируем инициалы пользователя
   const userInitials =

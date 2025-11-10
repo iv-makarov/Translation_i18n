@@ -1,47 +1,21 @@
-import type { ProjectsListResponseDto } from "@/shared/api/schemas/projectsListResponseDto";
+import type { GetUsersResponseDto } from "@/shared/api/schemas/getUsersResponseDto";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/shared/components/ui/dropdown-menu";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@shared/components/ui/table";
-import {
-  Check,
-  ChevronLeft,
-  ChevronRight,
-  Edit,
-  MoreHorizontal,
-  Trash2,
-} from "lucide-react";
-import { useState } from "react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/ui/dropdown-menu";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table";
+import { Check, Edit, MoreHorizontal, Trash2 } from "lucide-react";
 
-export default function ProjectTable({ projects }: { projects: ProjectsListResponseDto }) {
-  const [filters, setFilters] = useState({
-    page: 1,
-    limit: 10,
-  });
+interface UsersTableProps {
+  users: GetUsersResponseDto;
+}
 
-  const handleDeleteProject = async (projectId: string) => {
-    console.log("Delete", projectId);
-
-  };
-
+export default function UsersTable({ users }: UsersTableProps) {
   return (
     <div>
       {/* Информация о количестве проектов */}
-      {projects.total > 0 && (
+      {users.users.length > 0 && (
         <div className="mb-4 text-sm text-muted-foreground">
-          Всего проектов: {projects.total}
+          Всего проектов: {users.users.length}
         </div>
       )}
 
@@ -49,97 +23,63 @@ export default function ProjectTable({ projects }: { projects: ProjectsListRespo
         <Table>
           <TableHeader>
             <TableRow className="bg-muted/50 whitespace-nowrap">
-              <TableHead className="h-9 py-2">Название</TableHead>
-              <TableHead className="h-9 py-2">URL</TableHead>
-              <TableHead className="h-9 py-2">Пространство</TableHead>
-              <TableHead className="h-9 py-2">Статус</TableHead>
-              <TableHead className="h-9 py-2">Создан</TableHead>
-              <TableHead className="h-9 py-2 text-right">Действия</TableHead>
+              <TableHead className="h-9 py-2">Last Name</TableHead>
+              <TableHead className="h-9 py-2">First Name</TableHead>
+              <TableHead className="h-9 py-2">Email</TableHead>
+              <TableHead className="h-9 py-2">Role</TableHead>
+              <TableHead className="h-9 py-2">Status</TableHead>
+              <TableHead className="h-9 py-2">Created At</TableHead>
+              <TableHead className="h-9 py-2 text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody className="overflow-x-auto">
-            {projects.data?.length === 0 ? (
+            {users.users.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
                   className="text-center py-8 text-muted-foreground"
                 >
-                  Проекты не найдены
+                  Users not found
                 </TableCell>
               </TableRow>
             ) : (
-              projects.data.map((project) => (
+              users.users.map((user) => (
                 <TableRow
                   className="cursor-pointer"
-                  key={project.id}
+                  key={user.id}
                   onClick={() => {
-                    console.log("Project", project.id);
+                    console.log("User", user.id);
                   }}
                 >
                   <TableCell className="py-2 whitespace-nowrap">
                     <div>
-                      <div className="font-medium">{project.name}</div>
-                      {project.description && (
-                        <div className="text-sm text-muted-foreground truncate max-w-xs">
-                          {project.description}
-                        </div>
-                      )}
+                      <div className="font-medium">{user.lastName} {user.firstName}</div>
                     </div>
                   </TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
-                    {project.whiteUrls && project.whiteUrls.length > 0 ? (
-                      <div className="flex flex-col gap-1">
-                        {project.whiteUrls.map((whiteUrl, index) => (
-                          <a
-                            key={index}
-                            href={whiteUrl.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-blue-600 hover:underline text-sm"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            {whiteUrl.url}
-                          </a>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">—</span>
-                    )}
+                    {user.email}
                   </TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
-                    {project.nameSpaces && project.nameSpaces.length > 0 ? (
-                      <div className="flex flex-wrap gap-1">
-                        {project.nameSpaces.map((nameSpace, index) => (
-                          <span
-                            key={index}
-                            className="text-sm font-mono bg-muted px-2 py-1 rounded"
-                          >
-                            {nameSpace.name}
-                          </span>
-                        ))}
-                      </div>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">—</span>
-                    )}
+                    {user.role}
                   </TableCell>
                   <TableCell className="py-2">
                     <div className="flex flex-col gap-1">
                       <Badge
-                        variant={project.isBlocked ? "destructive" : "outline"}
+                        variant={user.isActive ? "default" : "secondary"}
                         className="text-xs"
                       >
-                        {project.isBlocked ? "Заблокирован" : "Активен"}
+                        {user.isActive ? "Активен" : "Не активен"}
                       </Badge>
                       <Badge
-                        variant={project.isVerified ? "default" : "secondary"}
+                        variant={user.isEmailVerified ? "default" : "secondary"}
                         className="text-xs"
                       >
-                        {project.isVerified ? "Проверен" : "Не проверен"}
+                        {user.isEmailVerified ? "Email проверен" : "Email не проверен"}
                       </Badge>
                     </div>
                   </TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
-                    {new Date(project.createdAt).toLocaleDateString("ru-RU")}
+                    {new Date(user.createdAt).toLocaleDateString("ru-RU")}
                   </TableCell>
                   <TableCell className="py-2">
                     <DropdownMenu>
@@ -154,27 +94,26 @@ export default function ProjectTable({ projects }: { projects: ProjectsListRespo
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
-                            console.log("Edit", project.id);
+                            console.log("Edit", user.id);
                           }}
                         >
-                          <Edit className="mr-2 h-4 w-4" /> Редактировать
+                          <Edit className="mr-2 h-4 w-4" /> Edit
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
-                            console.log("Verify", project.id);
+                            console.log("Verify", user.id);
                           }}
                         >
-                          <Check className="mr-2 h-4 w-4" /> Проверить
+                          <Check className="mr-2 h-4 w-4" /> Verify
                         </DropdownMenuItem>
                         <DropdownMenuItem
                           onClick={(e) => {
                             e.stopPropagation();
-                            handleDeleteProject(project.id);
                           }}
                           className="focus:text-destructive"
                         >
-                          <Trash2 className="mr-2 h-4 w-4" /> Удалить
+                          <Trash2 className="mr-2 h-4 w-4" /> Delete
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -187,7 +126,7 @@ export default function ProjectTable({ projects }: { projects: ProjectsListRespo
       </div>
 
       {/* Пагинация */}
-      {projects.total > filters.limit && (
+      {/* {projects.total > filters.limit && (
         <div className="flex items-center justify-between px-2 py-4">
           <div className="text-sm text-muted-foreground">
             Показано {(filters.page - 1) * filters.limit + 1} -{" "}
@@ -227,7 +166,7 @@ export default function ProjectTable({ projects }: { projects: ProjectsListRespo
             </Button>
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }

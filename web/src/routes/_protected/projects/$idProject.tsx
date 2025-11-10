@@ -5,7 +5,7 @@ export const Route = createFileRoute("/_protected/projects/$idProject")({
 });
 
 function RouteComponent() {
-  const { idProject } = useParams({ from: "/projects/$idProject" });
+  const { idProject } = useParams({ from: "/_protected/projects/$idProject" });
 
   return (
     <div>

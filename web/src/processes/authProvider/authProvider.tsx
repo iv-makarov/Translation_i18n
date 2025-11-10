@@ -1,4 +1,4 @@
-import { getUserControllerGetProfileQueryOptions } from "@/shared/api/endpoints/user/user";
+import { getProfileControllerGetProfileQueryOptions } from "@/shared/api/endpoints/profile/profile";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   createContext,
@@ -71,7 +71,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       // Проверяем реальное состояние на бэкенде через React Query
       // Это позволяет использовать кэш и избежать дублирующих запросов
       try {
-        const queryOptions = getUserControllerGetProfileQueryOptions();
+        const queryOptions = getProfileControllerGetProfileQueryOptions();
         const queryKey = queryOptions.queryKey;
 
         // Проверяем, есть ли уже данные в кэше
