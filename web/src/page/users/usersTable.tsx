@@ -1,8 +1,20 @@
 import type { GetUsersResponseDto } from "@/shared/api/schemas/getUsersResponseDto";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/shared/components/ui/dropdown-menu";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/shared/components/ui/table";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/shared/components/ui/dropdown-menu";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/shared/components/ui/table";
 import { Check, Edit, MoreHorizontal, Trash2 } from "lucide-react";
 
 interface UsersTableProps {
@@ -53,8 +65,11 @@ export default function UsersTable({ users }: UsersTableProps) {
                 >
                   <TableCell className="py-2 whitespace-nowrap">
                     <div>
-                      <div className="font-medium">{user.lastName} {user.firstName}</div>
+                      <div className="font-medium">{user.lastName}</div>
                     </div>
+                  </TableCell>
+                  <TableCell className="py-2 whitespace-nowrap">
+                    <div className="font-medium">{user.firstName}</div>
                   </TableCell>
                   <TableCell className="py-2 whitespace-nowrap">
                     {user.email}
@@ -63,7 +78,7 @@ export default function UsersTable({ users }: UsersTableProps) {
                     {user.role}
                   </TableCell>
                   <TableCell className="py-2">
-                    <div className="flex flex-col gap-1">
+                    <div className="flex flex-col gap-2">
                       <Badge
                         variant={user.isActive ? "default" : "secondary"}
                         className="text-xs"
@@ -74,7 +89,9 @@ export default function UsersTable({ users }: UsersTableProps) {
                         variant={user.isEmailVerified ? "default" : "secondary"}
                         className="text-xs"
                       >
-                        {user.isEmailVerified ? "Email проверен" : "Email не проверен"}
+                        {user.isEmailVerified
+                          ? "Email проверен"
+                          : "Email не проверен"}
                       </Badge>
                     </div>
                   </TableCell>
