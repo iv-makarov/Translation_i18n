@@ -3,7 +3,7 @@ import {
   getProjectsControllerGetProjectsQueryKey,
   getProjectsControllerGetProjectsQueryOptions,
 } from "@/shared/api/endpoints/projects/projects";
-import type { ProjectsListResponseDto } from "@/shared/api/schemas/projectsListResponseDto";
+import type { GetProjectsResponseDto } from "@/shared/api/schemas/getProjectsResponseDto";
 import { useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 import { useMemo } from "react";
@@ -26,8 +26,8 @@ function RouteComponent() {
 
   const projectsData = useMemo(() => {
     const queryKey = getProjectsControllerGetProjectsQueryKey();
-    return queryClient.getQueryData<ProjectsListResponseDto>(queryKey);
+    return queryClient.getQueryData<GetProjectsResponseDto>(queryKey);
   }, [queryClient]);
 
-  return <ProjectsPage projects={projectsData?.data || []} />;
+  return <ProjectsPage projects={projectsData ?? { projects: [] }} />;
 }

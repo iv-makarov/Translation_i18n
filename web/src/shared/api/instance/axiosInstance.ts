@@ -46,8 +46,8 @@ instance.interceptors.response.use(
     if (error.response?.status === 401 && !originalRequest._retry) {
       // Если это запрос на refresh или login - не пытаемся обновить токен
       if (
-        originalRequest.url?.includes("/auth/refresh") ||
-        originalRequest.url?.includes("/auth/login")
+        originalRequest.url?.includes("/refresh") ||
+        originalRequest.url?.includes("/login")
       ) {
         return Promise.reject(error);
       }
@@ -67,7 +67,7 @@ instance.interceptors.response.use(
 
       try {
         // Пытаемся обновить токен
-        await instance.post("/auth/refresh");
+        await instance.post("/refresh");
 
         // Токен обновлен успешно
         isRefreshing = false;

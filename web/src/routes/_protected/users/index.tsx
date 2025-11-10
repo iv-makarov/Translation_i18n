@@ -20,5 +20,5 @@ function RouteComponent() {
   const { data: users } =
     useUserControllerGetUsers<AxiosResponse<GetUsersResponseDto>>();
   console.log(users);
-  return <UsersPage users={users?.data} />;
+  return <UsersPage users={users?.data ?? { users: [] }} />;
 }

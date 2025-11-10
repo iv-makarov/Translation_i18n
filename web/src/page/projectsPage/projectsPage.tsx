@@ -1,7 +1,8 @@
 import ProjectCreate from "@/page/projectsPage/projectCreate";
 import ProjectTable from "@/page/projectsPage/projectTable";
+import type { GetProjectsResponseDto } from "@/shared/api/schemas/getProjectsResponseDto";
 
-export default function ProjectsPage({projects}) {
+export default function ProjectsPage({projects}: {projects: GetProjectsResponseDto}) {
   return (
     <>
       <div className="flex flex-col gap-4 p-4">

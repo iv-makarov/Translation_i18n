@@ -1,4 +1,4 @@
-import type { ProjectsListResponseDto } from "@/shared/api/schemas/projectsListResponseDto";
+import type { GetProjectsResponseDto } from "@/shared/api/schemas/getProjectsResponseDto";
 import { Badge } from "@/shared/components/ui/badge";
 import { Button } from "@/shared/components/ui/button";
 import {
@@ -25,7 +25,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 
-export default function ProjectTable({ projects }: { projects: ProjectsListResponseDto }) {
+export default function ProjectTable({ projects }: { projects: GetProjectsResponseDto }) {
   const [filters, setFilters] = useState({
     page: 1,
     limit: 10,
@@ -39,9 +39,9 @@ export default function ProjectTable({ projects }: { projects: ProjectsListRespo
   return (
     <div>
       {/* Информация о количестве проектов */}
-      {projects.total > 0 && (
+      {projects.projects.length > 0 && (
         <div className="mb-4 text-sm text-muted-foreground">
-          Всего проектов: {projects.total}
+          Всего проектов: {projects.projects.length}
         </div>
       )}
 
@@ -58,7 +58,7 @@ export default function ProjectTable({ projects }: { projects: ProjectsListRespo
             </TableRow>
           </TableHeader>
           <TableBody className="overflow-x-auto">
-            {projects.data?.length === 0 ? (
+            {projects.projects.length === 0 ? (
               <TableRow>
                 <TableCell
                   colSpan={6}
@@ -68,7 +68,7 @@ export default function ProjectTable({ projects }: { projects: ProjectsListRespo
                 </TableCell>
               </TableRow>
             ) : (
-              projects.data.map((project) => (
+              projects.projects.map((project) => (
                 <TableRow
                   className="cursor-pointer"
                   key={project.id}
@@ -109,7 +109,7 @@ export default function ProjectTable({ projects }: { projects: ProjectsListRespo
                   <TableCell className="py-2 whitespace-nowrap">
                     {project.nameSpaces && project.nameSpaces.length > 0 ? (
                       <div className="flex flex-wrap gap-1">
-                        {project.nameSpaces.map((nameSpace, index) => (
+                        {project.nameSpaces?.map((nameSpace, index) => (
                           <span
                             key={index}
                             className="text-sm font-mono bg-muted px-2 py-1 rounded"

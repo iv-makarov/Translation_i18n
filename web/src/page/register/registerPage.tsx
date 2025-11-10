@@ -1,5 +1,5 @@
 import RegisterForm from "@/features/register/registerForm";
-import { useAuthControllerRegister } from "@/shared/api/endpoints/auth/auth";
+import { useAuthControllerRegister } from "@/shared/api/endpoints/authentication/authentication";
 import {
   Card,
   CardContent,
